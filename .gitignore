@@ -1,0 +1,4 @@
+**/.terraform/
+**/terraform-output.json
+terraform/terraform.tfvars
+.docker-init
