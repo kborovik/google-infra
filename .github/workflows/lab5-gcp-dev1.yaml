@@ -22,6 +22,6 @@ jobs:
       - id: terraform-plan
         name: Terraform Plan
         run: |-
-          env
+          cat $GOOGLE_APPLICATION_CREDENTIALS
           gcloud config list
           make settings terraform-plan
