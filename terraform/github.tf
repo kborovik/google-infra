@@ -32,12 +32,10 @@ resource "google_service_account" "github" {
   display_name = "GitHub OIDC"
 }
 
-resource "google_service_account_iam_binding" "github" {
+resource "google_service_account_iam_member" "github" {
   service_account_id = google_service_account.github.name
   role               = "roles/iam.workloadIdentityUser"
-  members = [
-    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.sub/${local.assertion_sub}",
-  ]
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.sub/${local.assertion_sub}"
 }
 
 locals {
