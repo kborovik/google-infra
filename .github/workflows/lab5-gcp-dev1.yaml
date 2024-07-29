@@ -19,6 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     environment: lab5-gcp-dev1
     steps:
+      - name: Get OIDC token
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const tokenUrl = process.env.ACTIONS_ID_TOKEN_REQUEST_URL
+            const token = await github.request({
+              url: tokenUrl,
+              headers: {
+                Authorization: `Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`
+              }
+            })
+            console.log("OIDC token:", token.data.value)
       - id: checkout
         name: Code Checkout
         uses: actions/checkout@v4
@@ -26,8 +38,8 @@ jobs:
         name: GCP Authentication
         uses: google-github-actions/auth@v2
         with:
-          project_id: ${{ env.GOOGLE_PROJECT }}
-          workload_identity_provider: ${{ env.GOOGLE_WIP }}
+          project_id: lab5-gcp-dev1
+          workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
       - id: gcloud
         name: Gcloud List Networks
         run: |-

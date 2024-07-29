@@ -9,6 +9,8 @@ locals {
     "compute.googleapis.com",
     "container.googleapis.com",
     "containersecurity.googleapis.com",
+    "iam.googleapis.com",
+    "iamcredentials.googleapis.com",
     "iap.googleapis.com",
     "logging.googleapis.com",
     "monitoring.googleapis.com",
@@ -16,6 +18,7 @@ locals {
     "osconfig.googleapis.com",
     "servicenetworking.googleapis.com",
     "storage.googleapis.com",
+    "sts.googleapis.com",
   ]
 }
 

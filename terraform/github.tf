@@ -17,7 +17,6 @@ resource "google_iam_workload_identity_pool_provider" "github" {
   workload_identity_pool_provider_id = "github"
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
   attribute_mapping = {
-    "attribute.aud"  = "assertion.aud"
     "google.subject" = "assertion.sub"
   }
   oidc {
