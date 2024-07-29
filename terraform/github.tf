@@ -3,7 +3,7 @@
 ###############################################################################
 
 locals {
-  assertion_aud = "https://github.com/kborovik/"
+  assertion_aud = "https://github.com/kborovik"
   assertion_sub = "repo:kborovik/google-infra:environment:${var.google_project}"
 }
 

@@ -1,10 +1,10 @@
 name: lab5-gcp-dev1
 
-env:
-  GOOGLE_PROJECT: lab5-gcp-dev1
-  GOOGLE_WIP: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
-  # GOOGLE_OAUTH_ACCESS_TOKEN: ${{}}
-  # GOOGLE_IMPERSONATE_SERVICE_ACCOUNT: ${{ secrets.GCP_SA_EMAIL }}
+# env:
+#   GCP_PROJECT: lab5-gcp-dev1
+#   GCP_WIP: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
+#   GOOGLE_OAUTH_ACCESS_TOKEN: ${{}}
+#   GOOGLE_IMPERSONATE_SERVICE_ACCOUNT: ${{ secrets.GCP_SA_EMAIL }}
 
 on: push
 
@@ -25,6 +25,8 @@ jobs:
         with:
           project_id: lab5-gcp-dev1
           workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
+          service_account: github@lab5-gcp-dev1.iam.gserviceaccount.com
+          token_format: access_token
       - id: gcloud
         name: Gcloud List Networks
         run: |-
