@@ -1,0 +1,33 @@
+name: lab5-gcp-dev1
+
+env:
+  GOOGLE_PROJECT: lab5-gcp-dev1
+  GOOGLE_WIP: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
+  # GOOGLE_OAUTH_ACCESS_TOKEN: ${{}}
+  # GOOGLE_IMPERSONATE_SERVICE_ACCOUNT: ${{ secrets.GCP_SA_EMAIL }}
+
+on: push
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    environment: ${{ env.GOOGLE_PROJECT }}
+    steps:
+      - id: checkout
+        name: Code Checkout
+        uses: actions/checkout@v4
+      - id: auth
+        name: GCP Authentication
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ env.GOOGLE_PROJECT }}
+          workload_identity_provider: ${{ env.GOOGLE_WIP }}
+      - id: gcloud
+        name: Gcloud List Networks
+        run: |-
+          make version
+          gcloud compute networks list

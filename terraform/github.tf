@@ -17,13 +17,11 @@ resource "google_iam_workload_identity_pool_provider" "github" {
   workload_identity_pool_provider_id = "github"
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
   attribute_mapping = {
-    "attribute.actor"      = "assertion.actor"
-    "attribute.aud"        = "assertion.aud"
-    "attribute.repository" = "assertion.repository"
-    "google.subject"       = "assertion.sub"
+    "attribute.aud"  = "assertion.aud"
+    "google.subject" = "assertion.sub"
   }
   oidc {
-    allowed_audiences = ["${local.assertion_aud}"]
+    allowed_audiences = [local.assertion_aud]
     issuer_uri        = "https://token.actions.githubusercontent.com"
   }
 }
@@ -35,6 +33,14 @@ resource "google_iam_workload_identity_pool_provider" "github" {
 resource "google_service_account" "github" {
   account_id   = "github"
   display_name = "GitHub OIDC"
+}
+
+resource "google_service_account_iam_binding" "github" {
+  service_account_id = google_service_account.github.name
+  role               = "roles/iam.workloadIdentityUser"
+  members = [
+    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.sub/${local.assertion_sub}",
+  ]
 }
 
 locals {
@@ -52,10 +58,3 @@ resource "google_project_iam_member" "github" {
   member  = "serviceAccount:${google_service_account.github.email}"
 }
 
-resource "google_service_account_iam_binding" "github" {
-  service_account_id = google_service_account.github.name
-  role               = "roles/iam.workloadIdentityUser"
-  members = [
-    "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.sub/${local.assertion_sub}",
-  ]
-}
