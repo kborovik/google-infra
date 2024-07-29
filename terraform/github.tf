@@ -23,8 +23,12 @@ resource "google_iam_workload_identity_pool_provider" "github" {
     "google.subject"       = "assertion.sub"
   }
   oidc {
-    allowed_audiences = [local.assertion_aud]
-    issuer_uri        = "https://token.actions.githubusercontent.com"
+    allowed_audiences = [
+      "https://github.com/kborovik/google-infra",
+      "https://github.com/kborovik",
+      "kborovik/google-infra",
+    ]
+    issuer_uri = "https://token.actions.githubusercontent.com"
   }
 }
 
