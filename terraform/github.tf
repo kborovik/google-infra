@@ -46,7 +46,6 @@ locals {
     "roles/iam.workloadIdentityUser",
     "roles/networkmanagement.admin",
     "roles/storage.objectAdmin",
-    "roles/storage.objectUser",
   ]
 }
 

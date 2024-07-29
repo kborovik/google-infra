@@ -23,7 +23,6 @@ jobs:
       - id: terraform-plan
         name: Terraform Plan
         run: |-
-          gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+          gcloud auth login --force --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
           gcloud config list
-          gcloud services list
           make settings terraform-plan
