@@ -3,7 +3,6 @@
 ###############################################################################
 
 locals {
-  assertion_aud = "https://github.com/kborovik/google-infra"
   assertion_sub = "repo:kborovik/google-infra:environment:${var.google_project}"
 }
 

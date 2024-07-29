@@ -1,11 +1,5 @@
 name: lab5-gcp-dev1
 
-# env:
-#   GCP_PROJECT: lab5-gcp-dev1
-#   GCP_WIP: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
-#   GOOGLE_OAUTH_ACCESS_TOKEN: ${{}}
-#   GOOGLE_IMPERSONATE_SERVICE_ACCOUNT: ${{ secrets.GCP_SA_EMAIL }}
-
 on: push
 
 jobs:
@@ -25,10 +19,7 @@ jobs:
         with:
           project_id: lab5-gcp-dev1
           workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
-          # service_account: github@lab5-gcp-dev1.iam.gserviceaccount.com
-          # token_format: access_token
       - id: gcloud
         name: Gcloud List Networks
         run: |-
-          make version
-          gcloud compute networks list
+          make terraform-plan
