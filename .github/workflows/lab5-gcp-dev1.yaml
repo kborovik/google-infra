@@ -22,4 +22,6 @@ jobs:
       - id: gcloud
         name: Gcloud List Networks
         run: |-
+          export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
+          gcloud config list
           make terraform-plan
