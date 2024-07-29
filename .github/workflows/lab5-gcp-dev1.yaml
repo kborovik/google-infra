@@ -16,10 +16,6 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Get OIDC Token and display audience
-        run: |
-          OIDC_TOKEN=$(curl -sLS "${ACTIONS_ID_TOKEN_REQUEST_URL}" -H "User-Agent: actions/oidc-client" -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
-          echo "$OIDC_TOKEN" | jq -r '.value'
       - id: checkout
         name: Code Checkout
         uses: actions/checkout@v4
