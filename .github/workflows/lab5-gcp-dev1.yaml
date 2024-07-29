@@ -10,27 +10,21 @@ env:
 
 on: push
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest
     environment: lab5-gcp-dev1
+    permissions:
+      id-token: write
+      contents: read
     steps:
-      - name: Get OIDC token
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const tokenUrl = process.env.ACTIONS_ID_TOKEN_REQUEST_URL
-            const token = await github.request({
-              url: tokenUrl,
-              headers: {
-                Authorization: `Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`
-              }
-            })
-            console.log("OIDC token:", token.data.value)
+      - name: Get OIDC Token and display audience
+        run: |
+          OIDC_TOKEN=$(curl -sLS "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=your-audience" \
+            -H "User-Agent: actions/oidc-client" \
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+          AUD_CLAIM=$(echo $OIDC_TOKEN | jq -r '.aud')
+          echo "OIDC Token Audience: $AUD_CLAIM"
       - id: checkout
         name: Code Checkout
         uses: actions/checkout@v4
