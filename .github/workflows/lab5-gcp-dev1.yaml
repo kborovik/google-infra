@@ -1,5 +1,7 @@
 name: lab5-gcp-dev1
 
+run-name: lab5-gcp-dev1
+
 env:
   GOOGLE_PROJECT: lab5-gcp-dev1
   GOOGLE_WIP: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
@@ -15,7 +17,7 @@ permissions:
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest
-    environment: ${{ env.GOOGLE_PROJECT }}
+    environment: lab5-gcp-dev1
     steps:
       - id: checkout
         name: Code Checkout
