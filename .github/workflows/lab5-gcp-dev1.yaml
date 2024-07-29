@@ -19,9 +19,9 @@ jobs:
         with:
           project_id: lab5-gcp-dev1
           workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
-      - id: gcloud
-        name: Gcloud List Networks
+      - id: terraform-setup
+        uses: hashicorp/setup-terraform@v3
+      - id: terraform-plan
+        name: Terraform Plan
         run: |-
-          export GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
-          gcloud config list
-          make terraform-plan
+          make settings terraform-plan
