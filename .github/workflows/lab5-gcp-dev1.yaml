@@ -22,6 +22,6 @@ jobs:
       - id: terraform-plan
         name: Terraform Plan
         run: |-
-          gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
+          gcloud auth activate-service-account --access-token-file="$GOOGLE_APPLICATION_CREDENTIALS"
           gcloud config list
           make settings terraform-plan
