@@ -14,10 +14,7 @@ google_project ?= lab5-gcp-dev1
 # Settings
 ###############################################################################
 
-app_id := demostack
-
-google_organization :=
-google_billing_account :=
+app_id := gcp
 
 gke_name := $(app_id)-01
 
@@ -42,7 +39,7 @@ VERSION := $(file < VERSION)
 # Info
 ###############################################################################
 
-default: help settings
+default: settings
 
 help:
 	$(call header,Help)
@@ -173,10 +170,12 @@ google-config:
 google-project:
 	$(call header,Create Google Project)
 	set -e
-	gcloud projects create $(google_project) --organization=$(google_organization)
-	gcloud billing projects link $(google_project) --billing-account=$(google_billing_account)
-	gcloud services enable compute.googleapis.com --project=$(google_project)
+	google_organization=$$(pass lab5/google/organization_id)
+	google_billing_account=$$(pass lab5/google/billing_account)
+	gcloud projects create $(google_project) --organization="$$google_organization"
+	gcloud billing projects link $(google_project) --billing-account="$$google_billing_account"
 	gcloud services enable cloudresourcemanager.googleapis.com --project=$(google_project)
+	gcloud services enable compute.googleapis.com --project=$(google_project)
 
 ###############################################################################
 # Kubernetes (GKE)

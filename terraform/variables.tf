@@ -5,7 +5,7 @@
 variable "app_id" {
   description = "Application ID to identify GCP resources"
   type        = string
-  default     = "wvai"
+  default     = "gcp"
 }
 
 variable "google_project" {
@@ -30,16 +30,4 @@ variable "google_network" {
     gcp_svc = string
   })
   default = null
-}
-
-variable "google_gke_subnet" {
-  description = "Google GKE sub-network address"
-  type        = string
-  default     = null
-}
-
-variable "gke_machine_type" {
-  description = "GKE Node Size"
-  type        = string
-  default     = "e2-highmem-2"
 }
