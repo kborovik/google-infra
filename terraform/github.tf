@@ -48,6 +48,7 @@ locals {
     "roles/compute.admin",
     "roles/iam.workloadIdentityUser",
     "roles/networkmanagement.admin",
+    "roles/storage.objectAdmin",
   ]
 }
 
