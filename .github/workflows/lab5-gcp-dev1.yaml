@@ -20,8 +20,9 @@ jobs:
           project_id: lab5-gcp-dev1
           workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
           service_account: github@lab5-gcp-dev1.iam.gserviceaccount.com
-          token_format: access_token
-          access_token_lifetime: 180s
+      - id: gcloud
+        name: Set up Cloud SDK
+        uses: "google-github-actions/setup-gcloud@v2"
       - id: terraform-plan
         name: Terraform Plan
         run: |-
