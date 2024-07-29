@@ -16,10 +16,10 @@ resource "google_iam_workload_identity_pool_provider" "github" {
   workload_identity_pool_provider_id = "github"
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
   attribute_mapping = {
-    "attribute.actor"      = "assertion.actor"
-    "attribute.aud"        = "assertion.aud"
-    "attribute.repository" = "assertion.repository"
-    "google.subject"       = "assertion.sub"
+    # "attribute.actor"      = "assertion.actor"
+    # "attribute.aud"        = "assertion.aud"
+    # "attribute.repository" = "assertion.repository"
+    "google.subject" = "assertion.sub"
   }
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
@@ -49,6 +49,7 @@ locals {
     "roles/iam.workloadIdentityUser",
     "roles/networkmanagement.admin",
     "roles/storage.objectAdmin",
+    "roles/storage.objectUser",
   ]
 }
 
