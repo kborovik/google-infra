@@ -34,7 +34,7 @@ resource "google_service_account" "github" {
 
 resource "google_service_account_iam_member" "github" {
   service_account_id = google_service_account.github.name
-  role               = "roles/iam.workloadIdentityUser"
+  role               = "roles/iam.serviceAccountTokenCreator"
   member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.sub/${local.assertion_sub}"
 }
 
@@ -42,8 +42,9 @@ locals {
   github_aim_roles = [
     "roles/compute.admin",
     "roles/iam.workloadIdentityUser",
+    "roles/iam.serviceAccountTokenCreator",
     "roles/networkmanagement.admin",
-    "roles/storage.objectAdmin",
+    "roles/storage.admin",
   ]
 }
 
