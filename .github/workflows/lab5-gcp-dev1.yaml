@@ -1,7 +1,5 @@
 name: lab5-gcp-dev1
 
-run-name: lab5-gcp-dev1
-
 env:
   GOOGLE_PROJECT: lab5-gcp-dev1
   GOOGLE_WIP: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
@@ -20,8 +18,9 @@ jobs:
     steps:
       - name: Get OIDC Token and display audience
         run: |
-          echo $ACTIONS_ID_TOKEN_REQUEST_URL
-          echo ACTIONS_ID_TOKEN_REQUEST_TOKEN
+          OIDC_TOKEN=$(curl -sLS "${ACTIONS_ID_TOKEN_REQUEST_URL}" -H "User-Agent: actions/oidc-client" -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+          AUD_CLAIM=$(echo $OIDC_TOKEN | jq -r '.aud')
+          echo "OIDC Token Audience: $AUD_CLAIM"
       - id: checkout
         name: Code Checkout
         uses: actions/checkout@v4
