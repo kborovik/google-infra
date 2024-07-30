@@ -28,9 +28,8 @@ jobs:
         name: Terraform Cache
         uses: actions/cache@v4
         with:
-          path: ~/.terraform.d/plugin-cache
-          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
-          save-always: true
+          path: terraform/.terraform
+          key: ${{ runner.os }}-terraform-${{ hashFiles('terraform/.terraform.lock.hcl') }}
       - id: terraform-plan
         name: Terraform Plan
         run: |-
@@ -54,9 +53,8 @@ jobs:
         name: Terraform Cache
         uses: actions/cache@v4
         with:
-          path: ~/.terraform.d/plugin-cache
-          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
-          save-always: true
+          path: terraform/.terraform
+          key: ${{ runner.os }}-terraform-${{ hashFiles('terraform/.terraform.lock.hcl') }}
       - id: terraform-apply
         name: Terraform Apply
         run: |-
