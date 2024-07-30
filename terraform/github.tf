@@ -3,7 +3,6 @@
 ###############################################################################
 
 locals {
-  # assertion_sub        = "repo:kborovik/google-infra:environment:${var.google_project}"
   assertion_repository = "kborovik/google-infra"
 }
 
