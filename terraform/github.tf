@@ -3,9 +3,8 @@
 ###############################################################################
 
 locals {
-  assertion_sub        = "repo:kborovik/google-infra:environment:${var.google_project}"
+  # assertion_sub        = "repo:kborovik/google-infra:environment:${var.google_project}"
   assertion_repository = "kborovik/google-infra"
-  # "attribute.repository" = "assertion.repository"
 }
 
 resource "google_iam_workload_identity_pool" "github" {
@@ -43,12 +42,7 @@ resource "google_service_account_iam_member" "github" {
 
 locals {
   github_aim_roles = [
-    "roles/compute.admin",
-    "roles/iam.workloadIdentityPoolAdmin",
-    "roles/iam.workloadIdentityUser",
-    "roles/networkmanagement.admin",
-    "roles/servicenetworking.networksAdmin",
-    "roles/storage.admin",
+    "roles/editor",
   ]
 }
 
