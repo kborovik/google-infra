@@ -19,7 +19,6 @@ jobs:
         with:
           project_id: lab5-gcp-dev1
           workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github1/providers/github1
-          service_account: github@lab5-gcp-dev1.iam.gserviceaccount.com
       - id: terraform-plan
         name: Terraform Plan
         run: |-
@@ -38,7 +37,7 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           project_id: lab5-gcp-dev1
-          workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
+          workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github1/providers/github1
           service_account: github@lab5-gcp-dev1.iam.gserviceaccount.com
       - id: terraform-apply
         name: Terraform Apply
