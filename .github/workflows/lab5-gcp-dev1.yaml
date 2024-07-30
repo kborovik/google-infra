@@ -1,16 +1,15 @@
 name: lab5-gcp-dev1
 
-run-name: Google Project lab5-gcp-dev1
-
 on: pull_request
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest
     environment: lab5-gcp-dev1
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - id: checkout
         name: Code Checkout
@@ -26,12 +25,10 @@ jobs:
         name: Terraform Plan
         run: |-
           make settings terraform-plan
+
   terraform-apply:
     runs-on: ubuntu-latest
     environment: lab5-gcp-dev1
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - id: checkout
         name: Code Checkout
@@ -43,7 +40,7 @@ jobs:
           project_id: lab5-gcp-dev1
           workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
           service_account: github@lab5-gcp-dev1.iam.gserviceaccount.com
-      - id: terraform-plan
-        name: Terraform Plan
+      - id: terraform-apply
+        name: Terraform Apply
         run: |-
           make settings terraform-plan
