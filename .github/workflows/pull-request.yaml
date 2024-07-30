@@ -1,6 +1,8 @@
-name: lab5-gcp-dev1
+name: Pull Request
 
-on: pull_request
+on:
+  pull_request:
+    branches: [$default-branch]
 
 permissions:
   id-token: write
@@ -9,17 +11,19 @@ permissions:
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest
-    environment: lab5-gcp-dev1
     steps:
       - id: checkout
+        name: Code Checkout
         uses: actions/checkout@v4
-      - id: google-auth
+      - id: auth
+        name: Google Cloud Authentication
         uses: google-github-actions/auth@v2
         with:
           project_id: lab5-gcp-dev1
           workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/github
           service_account: github@lab5-gcp-dev1.iam.gserviceaccount.com
       - id: terraform-plan
+        name: Terraform Plan
         run: |-
           make settings terraform-plan
 
@@ -29,8 +33,10 @@ jobs:
     needs: terraform-plan
     steps:
       - id: checkout
+        name: Code Checkout
         uses: actions/checkout@v4
-      - id: google-auth
+      - id: auth
+        name: Google Cloud Authentication
         uses: google-github-actions/auth@v2
         with:
           project_id: lab5-gcp-dev1
