@@ -49,6 +49,12 @@ jobs:
         with:
           project_id: ${{ env.google_project }}
           workload_identity_provider: ${{ env.workload_identity_provider }}
+      - id: cache
+        name: Terraform Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
       - id: terraform-apply
         name: Terraform Apply
         run: |-
