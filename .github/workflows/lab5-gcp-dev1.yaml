@@ -37,7 +37,7 @@ jobs:
 
   terraform-apply:
     runs-on: ubuntu-latest
-    environment: ${{ env.google_project }}
+    environment: ${{ github.repository_owner }}-${{ github.event.repository.name }}
     needs: terraform-plan
     steps:
       - id: checkout
