@@ -30,6 +30,7 @@ jobs:
         with:
           path: ~/.terraform.d/plugin-cache
           key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          save-always: true
       - id: terraform-plan
         name: Terraform Plan
         run: |-
@@ -55,6 +56,7 @@ jobs:
         with:
           path: ~/.terraform.d/plugin-cache
           key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          save-always: true
       - id: terraform-apply
         name: Terraform Apply
         run: |-
