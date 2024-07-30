@@ -23,5 +23,4 @@ jobs:
       - id: terraform-plan
         name: Terraform Plan
         run: |-
-          gcloud services list
           make settings terraform-plan
