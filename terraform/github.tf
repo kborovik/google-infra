@@ -41,10 +41,8 @@ resource "google_service_account_iam_member" "github" {
 locals {
   github_aim_roles = [
     "roles/compute.admin",
-    "roles/iam.workloadIdentityUser",
     "roles/networkmanagement.admin",
     "roles/storage.admin",
-    "roles/editor",
   ]
 }
 
