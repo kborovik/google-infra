@@ -7,13 +7,13 @@ locals {
 }
 
 resource "google_iam_workload_identity_pool" "github" {
-  display_name              = "github"
-  workload_identity_pool_id = "github"
+  workload_identity_pool_id = "github1"
+  display_name              = "github.com"
 }
 
 resource "google_iam_workload_identity_pool_provider" "github" {
-  display_name                       = "github"
-  workload_identity_pool_provider_id = "github"
+  workload_identity_pool_provider_id = "github1"
+  display_name                       = "github.com"
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
   attribute_mapping = {
     "attribute.repository" = "assertion.repository"
@@ -29,8 +29,8 @@ resource "google_iam_workload_identity_pool_provider" "github" {
 ###############################################################################
 
 resource "google_service_account" "github" {
-  account_id   = "github"
   display_name = "GitHub OIDC"
+  account_id   = "github"
 }
 
 resource "google_service_account_iam_member" "github" {
