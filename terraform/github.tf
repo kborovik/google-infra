@@ -3,7 +3,9 @@
 ###############################################################################
 
 locals {
-  assertion_sub = "repo:kborovik/google-infra:environment:${var.google_project}"
+  assertion_sub        = "repo:kborovik/google-infra:environment:${var.google_project}"
+  assertion_repository = "kborovik/google-infra"
+  # "attribute.repository" = "assertion.repository"
 }
 
 resource "google_iam_workload_identity_pool" "github" {
@@ -16,7 +18,8 @@ resource "google_iam_workload_identity_pool_provider" "github" {
   workload_identity_pool_provider_id = "github"
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
   attribute_mapping = {
-    "google.subject" = "assertion.sub"
+    "attribute.repository" = "assertion.repository"
+    "google.subject"       = "assertion.sub"
   }
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
@@ -35,7 +38,7 @@ resource "google_service_account" "github" {
 resource "google_service_account_iam_member" "github" {
   service_account_id = google_service_account.github.name
   role               = "roles/iam.workloadIdentityUser"
-  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.sub/${local.assertion_sub}"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.repository/${local.assertion_repository}"
 }
 
 locals {
