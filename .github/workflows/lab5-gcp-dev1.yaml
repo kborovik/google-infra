@@ -37,7 +37,7 @@ jobs:
 
   terraform-apply:
     runs-on: ubuntu-latest
-    environment: ${{ env.GCP_PROJECT }}
+    environment: ${{ GCP_PROJECT }}
     needs: terraform-plan
     steps:
       - id: checkout
