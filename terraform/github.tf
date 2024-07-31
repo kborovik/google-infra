@@ -4,7 +4,7 @@
 
 locals {
   assertion_repository = "kborovik/google-infra"
-  repository_owner     = "kborovik"
+  repository_owner     = "'59314971'"
 }
 
 resource "google_iam_workload_identity_pool" "github" {
