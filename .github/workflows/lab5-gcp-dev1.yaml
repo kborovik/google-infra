@@ -51,7 +51,7 @@ jobs:
 
   terraform-apply:
     runs-on: ubuntu-latest
-    environment: lab5-gcp-dev1
+    environment: ${{ jobs.terraform-plan.env.google_project }}
     needs: terraform-plan
     if: github.event_name == 'pull_request'
     steps:
