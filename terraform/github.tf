@@ -3,8 +3,9 @@
 ###############################################################################
 
 locals {
-  assertion_repository = "kborovik/google-infra"
-  repository_owner_id  = "'59314971'"
+  github_owner_id      = "'59314971'"
+  github_repository    = "kborovik/google-infra"
+  github_repository_id = "''"
 }
 
 resource "google_iam_workload_identity_pool" "github" {
@@ -21,12 +22,12 @@ resource "google_iam_workload_identity_pool_provider" "github" {
   display_name                       = "GitHub Repo google-infra"
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
   attribute_mapping = {
-    "attribute.actor"            = "assertion.actor"
-    "attribute.repository_owner" = "assertion.repository_owner"
-    "attribute.repository"       = "assertion.repository"
-    "google.subject"             = "assertion.sub"
+    "attribute.repository"          = "assertion.repository"
+    "attribute.repository_id"       = "assertion.repository_id"
+    "attribute.repository_owner_id" = "assertion.repository_owner_id"
+    "google.subject"                = "assertion.sub"
   }
-  attribute_condition = "assertion.repository_owner == ${local.repository_owner_id}"
+  attribute_condition = "assertion.repository_owner_id == ${local.github_owner_id}"
 
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
@@ -52,5 +53,5 @@ resource "google_project_iam_member" "github_principal_set" {
   count   = length(local.github_aim_roles)
   project = var.google_project
   role    = local.github_aim_roles[count.index]
-  member  = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.repository/${local.assertion_repository}"
+  member  = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.repository/${local.github_repository}"
 }

@@ -281,7 +281,7 @@ echo "$(magenta)$(1)$(reset): $(yellow)$(2)$(reset)"
 endef
 
 prompt:
-	echo -n "$(blue)Continue?$(reset) $(yellow)(yes/no)$(reset)"
+	echo -n "$(blue)Deploy $(yellow)$(google_project)? $(green)(yes/no)$(reset)"
 	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
 
 ###############################################################################
