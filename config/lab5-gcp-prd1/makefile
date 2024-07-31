@@ -41,6 +41,7 @@ help: .gitignore .gpg_id
 	!.gpg_id
 	!*.asc
 	!makefile
+	!*.tfvars
 	EOF
 
 decrypt:

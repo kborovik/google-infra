@@ -3,3 +3,4 @@
 !.gpg_id
 !*.asc
 !makefile
+!*.tfvars
