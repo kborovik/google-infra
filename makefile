@@ -252,6 +252,15 @@ commit: version
 merge:
 	gh pr merge --squash --delete-branch $$(git rev-parse --abbrev-ref HEAD)
 
+release:
+	$(if $(shell git diff --name-only --exit-code),$(error ==> make version <==),)
+	$(if $(shell git diff --staged --name-only --exit-code),$(error ==> make commit <==),)
+	$(if $(shell git diff --name-only --exit-code HEAD origin/main),$(error ==> git push <==),)
+	echo -n "$(blue)GitHub deploy $(yellow)$(google_project)$(reset)? $(green)(yes/no)$(reset)"
+	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
+	git tag --force $(google_project) -m "$(google_project)"
+	git push --force --tags
+
 ###############################################################################
 # Colors and Headers
 ###############################################################################
