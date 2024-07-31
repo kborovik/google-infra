@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: lab5-gcp-uat1
     needs: terraform-plan
-    if: github.event_name == 'push' && github.ref == 'refs/tags/lab5-gcp-uat1'
+    if: github.ref == 'refs/tags/lab5-gcp-uat1'
     steps:
       - id: checkout
         name: Code Checkout
