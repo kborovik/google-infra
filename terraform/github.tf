@@ -4,7 +4,7 @@
 
 locals {
   assertion_repository = "kborovik/google-infra"
-  repository_owner     = "'59314971'"
+  repository_owner_id  = "'59314971'"
 }
 
 resource "google_iam_workload_identity_pool" "github" {
@@ -26,7 +26,7 @@ resource "google_iam_workload_identity_pool_provider" "github" {
     "attribute.repository"       = "assertion.repository"
     "google.subject"             = "assertion.sub"
   }
-  attribute_condition = "assertion.repository_owner == ${local.repository_owner}"
+  attribute_condition = "assertion.repository_owner == ${local.repository_owner_id}"
 
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
