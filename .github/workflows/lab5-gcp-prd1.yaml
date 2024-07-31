@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: lab5-gcp-prd1
     needs: terraform-plan
-    if: github.ref == 'refs/tags/lab5-gcp-prd1'
+    if: ${{ success() && github.ref == 'refs/tags/lab5-gcp-prd1' }}
     steps:
       - id: checkout
         name: Code Checkout
