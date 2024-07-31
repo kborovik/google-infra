@@ -1,0 +1,74 @@
+name: lab5-gcp-uat1
+run-name: lab5-gcp-uat1
+
+env:
+  google_project: lab5-gcp-uat1
+  workload_identity_provider: projects/869844840905/locations/global/workloadIdentityPools/github/providers/google-infra
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    tags:
+      - lab5-gcp-uat1
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Code Checkout
+        uses: actions/checkout@v4
+      - id: auth
+        name: Google Cloud Authentication
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ env.google_project }}
+          workload_identity_provider: ${{ env.workload_identity_provider }}
+      - id: cache
+        name: Terraform Cache
+        uses: actions/cache@v4
+        with:
+          path: terraform/.terraform
+          key: ${{ runner.os }}-terraform-${{ hashFiles('terraform/.terraform.lock.hcl') }}
+      - id: terraform-plan
+        name: Terraform Plan
+        run: |-
+          google_project=${{ env.google_project }} make settings terraform-plan
+
+  terraform-apply:
+    runs-on: ubuntu-latest
+    environment: lab5-gcp-uat1
+    needs: terraform-plan
+    if: ${{ success() && github.ref == 'refs/tags/lab5-gcp-uat1' }}
+    steps:
+      - id: checkout
+        name: Code Checkout
+        uses: actions/checkout@v4
+      - id: auth
+        name: Google Cloud Authentication
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ env.google_project }}
+          workload_identity_provider: ${{ env.workload_identity_provider }}
+      - id: cache
+        name: Terraform Cache
+        uses: actions/cache@v4
+        with:
+          path: terraform/.terraform
+          key: ${{ runner.os }}-terraform-${{ hashFiles('terraform/.terraform.lock.hcl') }}
+      - id: terraform-apply
+        name: Terraform Apply
+        run: |-
+          google_project=${{ env.google_project }} make settings terraform-apply

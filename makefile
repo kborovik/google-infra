@@ -67,6 +67,15 @@ shutdown: terraform-destroy-selected
 
 clean: terraform-clean kube-clean
 
+lab5-gcp-dev1:
+	google_project=lab5-gcp-dev1 $(MAKE) terraform
+
+lab5-gcp-uat1:
+	google_project=lab5-gcp-uat1 $(MAKE) terraform
+
+lab5-gcp-prd1:
+	google_project=lab5-gcp-prd1 $(MAKE) terraform
+
 ###############################################################################
 # Terraform
 ###############################################################################
@@ -243,6 +252,17 @@ commit: version
 merge:
 	gh pr merge --squash --delete-branch $$(git rev-parse --abbrev-ref HEAD)
 
+git_current_branch := $(shell git branch --show-current)
+
+release:
+	$(if $(shell git diff --name-only --exit-code),$(error ==> make version <==),)
+	$(if $(shell git diff --staged --name-only --exit-code),$(error ==> make commit <==),)
+	$(if $(shell git diff --name-only --exit-code HEAD origin/$(git_current_branch)),$(error ==> git push <==),)
+	echo -n "$(blue)GitHub deploy $(yellow)$(google_project)$(reset)? $(green)(yes/no)$(reset)"
+	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
+	git tag --force $(google_project) -m "$(google_project)"
+	git push --force --tags
+
 ###############################################################################
 # Colors and Headers
 ###############################################################################
@@ -272,7 +292,7 @@ echo "$(magenta)$(1)$(reset): $(yellow)$(2)$(reset)"
 endef
 
 prompt:
-	echo -n "$(blue)Continue?$(reset) $(yellow)(yes/no)$(reset)"
+	echo -n "$(blue)Deploy $(yellow)$(google_project)? $(green)(yes/no)$(reset)"
 	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
 
 ###############################################################################

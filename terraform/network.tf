@@ -56,26 +56,26 @@ resource "google_service_networking_connection" "google_service_network" {
 # Network NAT
 ###############################################################################
 
-resource "google_compute_address" "cloud_nat" {
-  name         = "cloud-nat-${var.app_id}"
-  region       = var.google_region
-  address_type = "EXTERNAL"
-}
+# resource "google_compute_address" "cloud_nat" {
+#   name         = "cloud-nat-${var.app_id}"
+#   region       = var.google_region
+#   address_type = "EXTERNAL"
+# }
 
-resource "google_compute_router" "main" {
-  name    = "main"
-  region  = var.google_region
-  network = google_compute_network.main.id
-}
+# resource "google_compute_router" "main" {
+#   name    = "main"
+#   region  = var.google_region
+#   network = google_compute_network.main.id
+# }
 
-resource "google_compute_router_nat" "main" {
-  name                               = "main"
-  region                             = var.google_region
-  router                             = google_compute_router.main.name
-  nat_ip_allocate_option             = "MANUAL_ONLY"
-  nat_ips                            = [google_compute_address.cloud_nat.id]
-  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-}
+# resource "google_compute_router_nat" "main" {
+#   name                               = "main"
+#   region                             = var.google_region
+#   router                             = google_compute_router.main.name
+#   nat_ip_allocate_option             = "MANUAL_ONLY"
+#   nat_ips                            = [google_compute_address.cloud_nat.id]
+#   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+# }
 
 ###############################################################################
 # Firewall Rules
