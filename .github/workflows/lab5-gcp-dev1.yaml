@@ -5,6 +5,10 @@ env:
   google_project: lab5-gcp-dev1
   workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/google-infra
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     branches:
@@ -12,10 +16,10 @@ on:
   push:
     branches:
       - main
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    tags:
+      - lab5-gcp-dev1
+      - lab5-gcp-uat1
+      - lab5-gcp-prd1
 
 permissions:
   id-token: write
