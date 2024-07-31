@@ -3,7 +3,6 @@ run-name: lab5-gcp-dev1
 
 on:
   pull_request:
-  push:
 
 env:
   google_project: lab5-gcp-dev1
