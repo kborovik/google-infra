@@ -1,7 +1,9 @@
 name: lab5-gcp-dev1
 run-name: lab5-gcp-dev1
 
-on: pull_request
+on:
+  pull_request:
+  workflow_dispatch:
 
 env:
   google_project: lab5-gcp-dev1
@@ -37,9 +39,9 @@ jobs:
 
   terraform-apply:
     runs-on: ubuntu-latest
-    environment:
-      name: lab5-gcp-dev1
+    environment: lab5-gcp-dev1
     needs: terraform-plan
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - id: checkout
         name: Code Checkout
