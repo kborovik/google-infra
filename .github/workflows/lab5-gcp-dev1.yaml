@@ -18,8 +18,6 @@ on:
       - main
     tags:
       - lab5-gcp-dev1
-      - lab5-gcp-uat1
-      - lab5-gcp-prd1
 
 permissions:
   id-token: write
@@ -53,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: lab5-gcp-dev1
     needs: terraform-plan
-    if: ${{ success() && github.event_name == 'pull_request' || github.ref == 'refs/tags/lab5-gcp-dev1' }}
+    if: ${{ success() && github.ref == 'refs/tags/lab5-gcp-dev1' || github.event_name == 'pull_request' }}
     steps:
       - id: checkout
         name: Code Checkout
