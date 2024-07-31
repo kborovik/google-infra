@@ -1,12 +1,17 @@
 name: lab5-gcp-dev1
 run-name: lab5-gcp-dev1
 
-on:
-  push:
-
 env:
   google_project: lab5-gcp-dev1
   workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/google-infra
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
