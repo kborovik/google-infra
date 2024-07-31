@@ -22,10 +22,8 @@ resource "google_iam_workload_identity_pool_provider" "github" {
   display_name                       = "GitHub Repo google-infra"
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
   attribute_mapping = {
-    "attribute.repository"          = "assertion.repository"
-    "attribute.repository_id"       = "assertion.repository_id"
-    "attribute.repository_owner_id" = "assertion.repository_owner_id"
-    "google.subject"                = "assertion.sub"
+    "attribute.repository" = "assertion.repository"
+    "google.subject"       = "assertion.sub"
   }
   attribute_condition = "assertion.repository_owner_id == ${local.github_owner_id}"
 
