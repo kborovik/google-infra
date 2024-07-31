@@ -6,7 +6,7 @@ env:
   workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/google-infra
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 on:
