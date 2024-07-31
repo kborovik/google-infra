@@ -1,8 +1,8 @@
-name: lab5-gcp-dev1
-run-name: lab5-gcp-dev1
+name: lab5-gcp-uat1
+run-name: lab5-gcp-uat1
 
 env:
-  google_project: lab5-gcp-dev1
+  google_project: lab5-gcp-uat1
   workload_identity_provider: projects/320561780581/locations/global/workloadIdentityPools/github/providers/google-infra
 
 concurrency:
@@ -51,7 +51,7 @@ jobs:
 
   terraform-apply:
     runs-on: ubuntu-latest
-    environment: lab5-gcp-dev1
+    environment: lab5-gcp-uat1
     needs: terraform-plan
     if: github.event_name == 'pull_request'
     steps:
