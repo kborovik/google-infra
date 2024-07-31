@@ -60,4 +60,4 @@ jobs:
       - id: terraform-apply
         name: Terraform Apply
         run: |-
-          google_project=${{ env.google_project }} make settings terraform-plan
+          google_project=${{ env.google_project }} make settings terraform-apply
