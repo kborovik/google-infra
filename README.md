@@ -4,7 +4,7 @@ This repository contains Google Cloud infrastructure deployment examples for var
 
 ## Topics
 
-- [GitHub Actions and Google Cloud OpenID Connect Integration](https://lab5-ca.web.app/google/github/)
+- [GitHub Actions and Google Cloud OpenID Connect Integration](https://lab5.ca/google/github-oidc-gcp/)
 
 ## Security Static Analysis
 
