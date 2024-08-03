@@ -249,9 +249,6 @@ version:
 commit: version
 	git commit -m "$$(cat VERSION)"
 
-merge:
-	gh pr merge --squash --delete-branch $$(git rev-parse --abbrev-ref HEAD)
-
 git_current_branch := $(shell git branch --show-current)
 
 release:
