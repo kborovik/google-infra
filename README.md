@@ -1,8 +1,8 @@
-# Google Cloud Infrastructure Examples with Terraform
+# Google Cloud Infrastructure Practical Guides
 
-This repository contains examples of Google Cloud infrastructure deployment for various Google Cloud elements. For detailed descriptions of each example, visit [Lab5.ca](https://www.lab5.ca/).
+This repository aims to provide practical content on building Cloud-Native Infrastructures using DevOps tools and practices that I find most effective in my daily work.
 
-The main objective is to build a `deployment stack`.
+For detailed descriptions of each guide, visit [lab5.ca](https://lab5.ca/).
 
 # Deployment Stack
 
