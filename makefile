@@ -178,11 +178,11 @@ google-config:
 
 google-project:
 	$(call header,Create Google Project)
+	$(eval google_organization := $(shell pass lab5/google/organization_id))
+	$(eval google_billing_account := $(shell pass lab5/google/billing_account))
 	set -e
-	google_organization=$$(pass lab5/google/organization_id)
-	google_billing_account=$$(pass lab5/google/billing_account)
-	gcloud projects create $(google_project) --organization="$$google_organization"
-	gcloud billing projects link $(google_project) --billing-account="$$google_billing_account"
+	gcloud projects create $(google_project) --organization=$(google_organization)
+	gcloud billing projects link $(google_project) --billing-account=$(google_billing_account)
 	gcloud services enable cloudresourcemanager.googleapis.com --project=$(google_project)
 	gcloud services enable compute.googleapis.com --project=$(google_project)
 
@@ -249,11 +249,10 @@ version:
 commit: version
 	git commit -m "$$(cat VERSION)"
 
-git_current_branch := $(shell git branch --show-current)
-
 release:
 	$(if $(shell git diff --name-only --exit-code),$(error ==> make version <==),)
 	$(if $(shell git diff --staged --name-only --exit-code),$(error ==> make commit <==),)
+	$(eval git_current_branch := $(shell git branch --show-current))
 	$(if $(shell git diff --name-only --exit-code HEAD origin/$(git_current_branch)),$(error ==> git push <==),)
 	echo -n "$(blue)GitHub deploy $(yellow)$(google_project)$(reset)? $(green)(yes/no)$(reset)"
 	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1

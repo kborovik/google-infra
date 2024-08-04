@@ -7,3 +7,5 @@ google_network = {
   gke_svc = "10.129.48.0/20",
   gcp_svc = "10.129.240.0/20"
 }
+gke_machine_type = "e2-highmem-2"
+gke_machine_spot = false
