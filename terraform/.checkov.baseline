@@ -1,0 +1,25 @@
+{
+    "failed_checks": [
+        {
+            "file": "/kubernetes.tf",
+            "findings": [
+                {
+                    "resource": "google_container_cluster.gke1",
+                    "check_ids": [
+                        "CKV_GCP_12",
+                        "CKV_GCP_21",
+                        "CKV_GCP_65",
+                        "CKV_GCP_66",
+                        "CKV_GCP_69"
+                    ]
+                },
+                {
+                    "resource": "google_container_node_pool.p1",
+                    "check_ids": [
+                        "CKV_GCP_69"
+                    ]
+                }
+            ]
+        }
+    ]
+}

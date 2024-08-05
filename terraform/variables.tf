@@ -31,3 +31,15 @@ variable "google_network" {
   })
   default = null
 }
+
+variable "gke_machine_type" {
+  description = "GKE Node Size"
+  type        = string
+  default     = "e2-highmem-2"
+}
+
+variable "gke_machine_spot" {
+  description = "GKE Node Spot"
+  type        = bool
+  default     = false
+}

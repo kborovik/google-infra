@@ -2,5 +2,5 @@
 !.gitignore
 !.gpg_id
 !*.asc
-!makefile
 !*.tfvars
+!makefile

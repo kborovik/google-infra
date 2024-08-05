@@ -63,7 +63,10 @@ secretes:
 
 deploy : terraform
 
-shutdown: terraform-destroy-selected
+shutdown: 
+	google_project=lab5-gcp-dev1 $(MAKE) terraform-destroy-selected
+	google_project=lab5-gcp-uat1 $(MAKE) terraform-destroy-selected
+	google_project=lab5-gcp-uat1 $(MAKE) terraform-destroy-selected
 
 clean: terraform-clean kube-clean
 
@@ -121,8 +124,9 @@ terraform-destroy-all: terraform-init
 terraform-destroy-selected: terraform-init
 	$(call header,Run Terraform Apply)
 	cd $(terraform_dir)
-	terraform apply -destroy -var-file="$(terraform_tfvars)" \
-	-target=google_compute_address.cloud_nat
+	terraform apply -auto-approve -destroy -var-file="$(terraform_tfvars)" \
+	-target=google_compute_address.cloud_nat \
+	-target=google_container_cluster.gke1
 
 terraform-clean:
 	$(call header,Delete Terraform providers and state)
@@ -178,11 +182,11 @@ google-config:
 
 google-project:
 	$(call header,Create Google Project)
+	$(eval google_organization := $(shell pass lab5/google/organization_id))
+	$(eval google_billing_account := $(shell pass lab5/google/billing_account))
 	set -e
-	google_organization=$$(pass lab5/google/organization_id)
-	google_billing_account=$$(pass lab5/google/billing_account)
-	gcloud projects create $(google_project) --organization="$$google_organization"
-	gcloud billing projects link $(google_project) --billing-account="$$google_billing_account"
+	gcloud projects create $(google_project) --organization=$(google_organization)
+	gcloud billing projects link $(google_project) --billing-account=$(google_billing_account)
 	gcloud services enable cloudresourcemanager.googleapis.com --project=$(google_project)
 	gcloud services enable compute.googleapis.com --project=$(google_project)
 
@@ -210,23 +214,22 @@ kube-clean:
 # Checkov
 ###############################################################################
 
-.checkov.baseline:
-	echo "{}" >| $@
+checkov_args := --quiet --compact --deep-analysis --soft-fail --directory $(terraform_dir)
 
-checkov: .checkov.baseline
+checkov:
 	$(call header,Run Checkov with baseline)
-	checkov --baseline .checkov.baseline
+	checkov $(checkov_args) --baseline $(terraform_dir)/.checkov.baseline
 
-checkov-all:
+checkov-no-baseline:
 	$(call header,Run Checkov NO baseline)
-	checkov --quiet
+	checkov $(checkov_args)
 
-checkov-baseline:
+checkov-create-baseline:
 	$(call header,Create Checkov baseline)
-	checkov --quiet --create-baseline
+	checkov --create-baseline --directory $(terraform_dir)
 
 checkov-clean:
-	rm -rf .checkov.baseline
+	rm -rf .$(terraform_dir)/.checkov.baseline
 
 checkov-install:
 	pipx install checkov
@@ -249,11 +252,10 @@ version:
 commit: version
 	git commit -m "$$(cat VERSION)"
 
-git_current_branch := $(shell git branch --show-current)
-
 release:
 	$(if $(shell git diff --name-only --exit-code),$(error ==> make version <==),)
 	$(if $(shell git diff --staged --name-only --exit-code),$(error ==> make commit <==),)
+	$(eval git_current_branch := $(shell git branch --show-current))
 	$(if $(shell git diff --name-only --exit-code HEAD origin/$(git_current_branch)),$(error ==> git push <==),)
 	echo -n "$(blue)GitHub deploy $(yellow)$(google_project)$(reset)? $(green)(yes/no)$(reset)"
 	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
