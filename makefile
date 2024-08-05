@@ -216,16 +216,16 @@ checkov:
 	$(call header,Run Checkov with baseline)
 	checkov $(checkov_args) --baseline $(terraform_dir)/.checkov.baseline
 
-checkov-all:
+checkov-no-baseline:
 	$(call header,Run Checkov NO baseline)
 	checkov $(checkov_args)
 
-checkov-baseline:
+checkov-create-baseline:
 	$(call header,Create Checkov baseline)
 	checkov --create-baseline --directory $(terraform_dir)
 
 checkov-clean:
-	rm -rf .checkov.baseline
+	rm -rf .$(terraform_dir)/.checkov.baseline
 
 checkov-install:
 	pipx install checkov
