@@ -63,7 +63,10 @@ secretes:
 
 deploy : terraform
 
-shutdown: terraform-destroy-selected
+shutdown: 
+	google_project=lab5-gcp-dev1 $(MAKE) terraform-destroy-selected
+	google_project=lab5-gcp-uat1 $(MAKE) terraform-destroy-selected
+	google_project=lab5-gcp-uat1 $(MAKE) terraform-destroy-selected
 
 clean: terraform-clean kube-clean
 
@@ -121,7 +124,7 @@ terraform-destroy-all: terraform-init
 terraform-destroy-selected: terraform-init
 	$(call header,Run Terraform Apply)
 	cd $(terraform_dir)
-	terraform apply -destroy -var-file="$(terraform_tfvars)" \
+	terraform apply -auto-approve -destroy -var-file="$(terraform_tfvars)" \
 	-target=google_compute_address.cloud_nat \
 	-target=google_container_cluster.gke1
 
