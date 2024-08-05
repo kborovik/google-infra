@@ -24,32 +24,24 @@ resource "google_project_iam_member" "gke1" {
 }
 
 ###############################################################################
-# Google Kubernetes regional cluster configuration
+# A minimal configuration GKE (regional) configuration
+# The cluster dedicated to a single application. 
+# Single application design drives the configuration choices.
 ###############################################################################
 
 resource "google_container_cluster" "gke1" {
-  name                = "${var.app_id}-01"
-  project             = var.google_project
-  location            = var.google_region
-  deletion_protection = false
-
-  # Remove default node pool. We want to control node pools separately.
+  name                     = "${var.app_id}-01"
+  project                  = var.google_project
+  location                 = var.google_region
+  deletion_protection      = false
   initial_node_count       = 1
   remove_default_node_pool = true
-
-  # https://cloud.google.com/kubernetes-engine/docs/how-to/intranode-visibility
-  enable_intranode_visibility = false
-
-  # Enable GKE Dataplane V2
-  # https://cloud.google.com/kubernetes-engine/docs/concepts/dataplane-v2
-  datapath_provider = "ADVANCED_DATAPATH"
-  # disable cilium network policy enforcement for now
-  enable_cilium_clusterwide_network_policy = false
 
   # Network configuration
   # https://cloud.google.com/kubernetes-engine/docs/concepts/alias-ips
   network    = google_compute_network.main.id
   subnetwork = google_compute_subnetwork.gke_net.id
+
   ip_allocation_policy {
     services_secondary_range_name = google_compute_subnetwork.gke_net.secondary_ip_range[1].range_name
     cluster_secondary_range_name  = google_compute_subnetwork.gke_net.secondary_ip_range[0].range_name
@@ -86,7 +78,7 @@ resource "google_container_cluster" "gke1" {
     gcp_public_cidrs_access_enabled = true
     cidr_blocks {
       display_name = "Bell Canada"
-      cidr_block   = "70.30.0.0/16"
+      cidr_block   = "142.198.0.0/16"
     }
     cidr_blocks {
       display_name = "GCP Internal Network"

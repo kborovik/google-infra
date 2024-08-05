@@ -122,7 +122,8 @@ terraform-destroy-selected: terraform-init
 	$(call header,Run Terraform Apply)
 	cd $(terraform_dir)
 	terraform apply -destroy -var-file="$(terraform_tfvars)" \
-	-target=google_compute_address.cloud_nat
+	-target=google_compute_address.cloud_nat \
+	-target=google_container_cluster.gke1
 
 terraform-clean:
 	$(call header,Delete Terraform providers and state)
