@@ -6,9 +6,9 @@ For detailed descriptions of each guide, please visit [lab5.ca](https://lab5.ca/
 
 # Deployment Stack
 
-This repository aims to build a **deployment stack** for a Custom Application. The deployment stack comprises three GCP projects, each representing a different environment.
+This repository aims to build a **deployment stack** for a Custom Application. The deployment stack comprises three (3) GCP projects, each representing a different environment.
 
-The main goal of the deployment stack is to enable **reliable deployments** of the Custom Application to the next environment using GitHub Actions.
+The main goal of the **deployment stack** is to enable **reliable deployments** of the Custom Application to the next environment using GitHub Actions.
 
 We define a **reliable deployment** as achieving at least a 95% success rate for deployments in the production Google Project on the first attempt.
 
