@@ -210,20 +210,19 @@ kube-clean:
 # Checkov
 ###############################################################################
 
-.checkov.baseline:
-	echo "{}" >| $@
+checkov_args := --quiet --compact --deep-analysis --soft-fail --directory $(terraform_dir)
 
-checkov: .checkov.baseline
+checkov:
 	$(call header,Run Checkov with baseline)
-	checkov --baseline .checkov.baseline
+	checkov $(checkov_args) --baseline $(terraform_dir)/.checkov.baseline
 
 checkov-all:
 	$(call header,Run Checkov NO baseline)
-	checkov --quiet
+	checkov $(checkov_args)
 
 checkov-baseline:
 	$(call header,Create Checkov baseline)
-	checkov --quiet --create-baseline
+	checkov --create-baseline --directory $(terraform_dir)
 
 checkov-clean:
 	rm -rf .checkov.baseline
