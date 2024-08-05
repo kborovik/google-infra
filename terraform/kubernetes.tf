@@ -38,7 +38,7 @@ resource "google_container_cluster" "gke1" {
   remove_default_node_pool = true
 
   # https://cloud.google.com/kubernetes-engine/docs/how-to/intranode-visibility
-  enable_intranode_visibility = true
+  enable_intranode_visibility = false
 
   # Enable GKE Dataplane V2
   # https://cloud.google.com/kubernetes-engine/docs/concepts/dataplane-v2
@@ -60,11 +60,6 @@ resource "google_container_cluster" "gke1" {
     # https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache
     dns_cache_config {
       enabled = true
-    }
-    # disable StateFullSet HA for now
-    # https://cloud.google.com/kubernetes-engine/docs/how-to/stateful-ha
-    stateful_ha_config {
-      enabled = false
     }
     # https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/gce-pd-csi-driver
     gce_persistent_disk_csi_driver_config {
@@ -113,14 +108,6 @@ resource "google_container_cluster" "gke1" {
     ]
   }
 
-  maintenance_policy {
-    recurring_window {
-      start_time = "2024-01-01T09:00:00Z"
-      end_time   = "2024-01-01T17:00:00Z"
-      recurrence = "FREQ=WEEKLY;BYDAY=SA,SU"
-    }
-  }
-
   monitoring_config {
     enable_components = [
       "SYSTEM_COMPONENTS",
@@ -128,15 +115,14 @@ resource "google_container_cluster" "gke1" {
       "DEPLOYMENT",
       "STATEFULSET",
     ]
-    # disable Dataplane V2 observability for now
-    # https://cloud.google.com/kubernetes-engine/docs/concepts/about-dpv2-observability
-    # advanced_datapath_observability_config {
-    #   enable_metrics = false
-    #   enable_relay   = false
-    # }
-    # managed_prometheus {
-    #   enabled = false
-    # }
+  }
+
+  maintenance_policy {
+    recurring_window {
+      start_time = "2024-01-01T09:00:00Z"
+      end_time   = "2024-01-01T17:00:00Z"
+      recurrence = "FREQ=WEEKLY;BYDAY=SA,SU"
+    }
   }
 }
 

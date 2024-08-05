@@ -43,8 +43,7 @@ resource "google_iam_workload_identity_pool_provider" "github" {
 locals {
   github_aim_roles = [
     "roles/editor",
-    "roles/iam.serviceAccountAdmin",
-    "roles/resourcemanager.projectIamAdmin,"
+    "roles/iam.securityAdmin",
   ]
 }
 
