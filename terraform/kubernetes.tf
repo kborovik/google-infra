@@ -8,7 +8,6 @@ locals {
     "roles/secretmanager.secretAccessor",
     "roles/secretmanager.viewer",
     "roles/viewer",
-    "roles/resourcemanager.projectIamAdmin,"
   ]
 }
 
