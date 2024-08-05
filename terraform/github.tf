@@ -44,6 +44,7 @@ locals {
   github_aim_roles = [
     "roles/editor",
     "roles/iam.serviceAccountAdmin",
+    # "roles/resourcemanager.projectIamAdmin,"
   ]
 }
 

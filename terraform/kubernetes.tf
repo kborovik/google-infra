@@ -8,6 +8,7 @@ locals {
     "roles/secretmanager.secretAccessor",
     "roles/secretmanager.viewer",
     "roles/viewer",
+    "roles/resourcemanager.projectIamAdmin,"
   ]
 }
 
@@ -130,13 +131,13 @@ resource "google_container_cluster" "gke1" {
     ]
     # disable Dataplane V2 observability for now
     # https://cloud.google.com/kubernetes-engine/docs/concepts/about-dpv2-observability
-    advanced_datapath_observability_config {
-      enable_metrics = false
-      enable_relay   = false
-    }
-    managed_prometheus {
-      enabled = false
-    }
+    # advanced_datapath_observability_config {
+    #   enable_metrics = false
+    #   enable_relay   = false
+    # }
+    # managed_prometheus {
+    #   enabled = false
+    # }
   }
 }
 
