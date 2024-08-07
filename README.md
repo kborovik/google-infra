@@ -4,21 +4,25 @@ This repository provides practical guidance on building cloud-native infrastruct
 
 For detailed descriptions of each guide, please visit [lab5.ca](https://lab5.ca/).
 
-# Deployment Stack
+## Deployment Stack Overview
 
-This repository aims to build a **deployment stack** for a Custom Application. The deployment stack comprises three (3) GCP projects, each representing a different environment.
+The primary focus of this repository is to construct a **deployment stack** for a Custom Application. This stack consists of three Google Cloud Platform (GCP) projects, each representing a distinct environment.
 
-The main goal of the **deployment stack** is to enable **reliable deployments** of the Custom Application to the next environment using GitHub Actions.
+### Key Objectives
 
-We define a **reliable deployment** as achieving at least a 95% success rate for deployments in the production Google Project on the first attempt.
+1. Enable **reliable deployments** of the Custom Application across environments using GitHub Actions.
+2. Achieve a minimum 95% success rate for first-attempt deployments in the production Google Project.
 
-| Google Project | Google Network | GitHub Actions Trigger  |
-| -------------- | -------------- | ----------------------- |
-| lab5-gcp-dev1  | 10.128.0.0/16  | refs/tags/lab5-gcp-dev1 |
-| lab5-gcp-uat1  | 10.129.0.0/16  | refs/tags/lab5-gcp-uat1 |
-| lab5-gcp-prd1  | 10.130.0.0/16  | refs/tags/lab5-gcp-prd1 |
+### Environment Configuration
 
+| Google Project | Network Range | GitHub Actions Trigger  |
+| -------------- | ------------- | ----------------------- |
+| lab5-gcp-dev1  | 10.128.0.0/16 | refs/tags/lab5-gcp-dev1 |
+| lab5-gcp-uat1  | 10.129.0.0/16 | refs/tags/lab5-gcp-uat1 |
+| lab5-gcp-prd1  | 10.130.0.0/16 | refs/tags/lab5-gcp-prd1 |
 
-# Practical Guides
+## Available Practical Guides
 
-- [Integrating GitHub Actions with Google Cloud using OpenID Connect](https://lab5.ca/google/github-oidc-gcp/)
+[Integrating GitHub Actions with Google Cloud using OpenID Connect](https://lab5.ca/google/github-oidc-gcp/)
+
+This guide provides step-by-step instructions on securely connecting GitHub Actions to Google Cloud services using OpenID Connect (OIDC) authentication.
