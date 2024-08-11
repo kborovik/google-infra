@@ -1,5 +1,5 @@
 ###############################################################################
-# Google Kubernetes cluster (GKE)
+# Google Kubernetes Engine (GKE) Service Account
 ###############################################################################
 locals {
   gke_project_roles = [
@@ -24,20 +24,17 @@ resource "google_project_iam_member" "gke1" {
 }
 
 ###############################################################################
-# A minimal configuration GKE (regional) configuration
 # The cluster dedicated to a single application. 
-# Single application design drives the configuration choices.
+# All GKE configuration choices based on the single-application workload.
 ###############################################################################
 
 resource "google_container_cluster" "gke1" {
-  name                     = "${var.app_id}-01"
-  project                  = var.google_project
-  location                 = var.google_region
-  deletion_protection      = false
-  initial_node_count       = 1
-  remove_default_node_pool = true
+  name                = "${var.app_id}-01"
+  project             = var.google_project
+  location            = var.google_region
+  deletion_protection = false
+  enable_autopilot    = true
 
-  # Network configuration
   # https://cloud.google.com/kubernetes-engine/docs/concepts/alias-ips
   network    = google_compute_network.main.id
   subnetwork = google_compute_subnetwork.gke_net.id
@@ -47,15 +44,13 @@ resource "google_container_cluster" "gke1" {
     cluster_secondary_range_name  = google_compute_subnetwork.gke_net.secondary_ip_range[0].range_name
   }
 
-  addons_config {
-    # enable DNS cache
-    # https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache
-    dns_cache_config {
-      enabled = true
-    }
-    # https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/gce-pd-csi-driver
-    gce_persistent_disk_csi_driver_config {
-      enabled = true
+  cluster_autoscaling {
+    auto_provisioning_defaults {
+      service_account = google_service_account.gke1.email
+      management {
+        auto_repair  = true
+        auto_upgrade = true
+      }
     }
   }
 
@@ -67,10 +62,14 @@ resource "google_container_cluster" "gke1" {
   private_cluster_config {
     enable_private_endpoint = false
     enable_private_nodes    = true
-    master_ipv4_cidr_block  = "172.31.255.240/28"
-
     master_global_access_config {
       enabled = true
+    }
+  }
+
+  master_auth {
+    client_certificate_config {
+      issue_client_certificate = false
     }
   }
 
@@ -83,12 +82,6 @@ resource "google_container_cluster" "gke1" {
     cidr_blocks {
       display_name = "GCP Internal Network"
       cidr_block   = google_compute_subnetwork.gke_net.ip_cidr_range
-    }
-  }
-
-  master_auth {
-    client_certificate_config {
-      issue_client_certificate = false
     }
   }
 
@@ -114,41 +107,6 @@ resource "google_container_cluster" "gke1" {
       start_time = "2024-01-01T09:00:00Z"
       end_time   = "2024-01-01T17:00:00Z"
       recurrence = "FREQ=WEEKLY;BYDAY=SA,SU"
-    }
-  }
-}
-
-resource "google_container_node_pool" "p1" {
-  name               = "p1"
-  cluster            = google_container_cluster.gke1.name
-  location           = var.google_region
-  initial_node_count = 1
-  max_pods_per_node  = 110
-
-  # https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-autoscaler
-  autoscaling {
-    max_node_count = 3
-    min_node_count = 1
-  }
-
-  management {
-    auto_repair  = true
-    auto_upgrade = true
-  }
-
-  node_config {
-    service_account = google_service_account.gke1.email
-    spot            = var.gke_machine_spot
-    machine_type    = var.gke_machine_type
-    oauth_scopes    = ["cloud-platform"]
-
-    gvnic {
-      enabled = true
-    }
-
-    shielded_instance_config {
-      enable_integrity_monitoring = true
-      enable_secure_boot          = true
     }
   }
 }
