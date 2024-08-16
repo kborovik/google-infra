@@ -5,7 +5,7 @@
 variable "app_id" {
   description = "Application ID to identify GCP resources"
   type        = string
-  default     = "gcp"
+  default     = "esrag"
 }
 
 variable "google_project" {
@@ -17,7 +17,7 @@ variable "google_project" {
 variable "google_region" {
   description = "Default GCP region"
   type        = string
-  default     = null
+  default     = "us-east5"
 }
 
 variable "google_network" {

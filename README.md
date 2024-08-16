@@ -23,6 +23,10 @@ The primary focus of this repository is to construct a **deployment stack** for 
 
 ## Available Practical Guides
 
-[Integrating GitHub Actions with Google Cloud using OpenID Connect](https://lab5.ca/google/github-oidc-gcp/)
+[Integrating GitHub Actions with Google Cloud using OpenID Connect](https://lab5.ca/google/github/)
 
 This guide provides step-by-step instructions on securely connecting GitHub Actions to Google Cloud services using OpenID Connect (OIDC) authentication.
+
+[Google Kubernetes Engine (GKE) Autopilot Cluster Mode](https://lab5.ca/google/gke-autopilot/)
+
+GKE Autopilot enables cost-effective, isolated development environments for cloud-native applications, offering automated management, enhanced security, and optimized resource allocation with reduced Kubernetes cluster administration.
