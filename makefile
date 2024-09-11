@@ -18,6 +18,8 @@ app_id := gcp
 
 gke_name := $(app_id)-01
 
+kueue_version := 0.8.1
+
 root_dir := $(abspath .)
 
 terraform_dir := $(root_dir)/terraform
@@ -209,6 +211,34 @@ $(KUBECONFIG):
 kube-clean:
 	$(call header,Delete Kubernetes credentials)
 	rm -rf $(KUBECONFIG)
+
+###############################################################################
+# Kueue deployment
+###############################################################################
+
+kueue: kueue-core kueue-api
+
+kueue-core: $(KUBECONFIG)
+	$(call header,Deploying Kueue Core v$(kueue_version))
+	set -e
+	kubectl apply --server-side -f https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/manifests.yaml
+	while ! kubectl wait deploy/kueue-controller-manager --namespace kueue-system --for=condition=available 2>/dev/null; do 
+		echo "Waiting for Kueue controller-manager to start..."; sleep 5; 
+	done
+	$(call header,Deployed Kueue Core v$(kueue_version))
+	kubectl get deployments.apps --namespace kueue-system
+
+kueue-api:
+	$(call header,Deploying Kueue API)
+	kubectl apply --server-side -f https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/visibility-api.yaml
+	$(call header,Deployed Kueue API)
+	kubectl get svc --namespace kueue-system kueue-visibility-server
+
+kueue-clean:
+	$(call header,Deleting Kueue deployments)
+	set -e
+	kubectl delete -f https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/visibility-api.yaml
+	kubectl delete -f https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/manifests.yaml
 
 ###############################################################################
 # Checkov

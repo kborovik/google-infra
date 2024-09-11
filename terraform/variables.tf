@@ -5,7 +5,7 @@
 variable "app_id" {
   description = "Application ID to identify GCP resources"
   type        = string
-  default     = "esrag"
+  default     = "gcp"
 }
 
 variable "google_project" {
