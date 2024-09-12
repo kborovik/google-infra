@@ -1,10 +1,50 @@
 # What is Kueue?
 
-Kubernetes Kueue is a cloud-native job queueing system designed for batch, HPC, AI/ML, and similar applications running in a Kubernetes cluster. It's important to note that Kueue is not a replacement for existing Kubernetes components, but rather a complementary tool.
+Kubernetes Kueue is a cloud-native job queueing system designed for batch, HPC, AI/ML, and similar applications running in a Kubernetes (GKE) cluster. It's important to note that Kueue is not a replacement for existing Kubernetes components, but rather a complementary tool.
 
 [Documentation](https://kueue.sigs.k8s.io/docs/installation)
 
 [Source Code](https://github.com/kubernetes-sigs/kueue)
+
+# What are the practical applications of Kubernetes (GKE) Kueue?
+
+## Cloud-Native Job Queueing
+Kueue serves as a cloud-native job queueing system for various types of applications in a Kubernetes cluster, including:
+- Batch processing
+- High-Performance Computing (HPC)
+- Artificial Intelligence and Machine Learning (AI/ML) workloads
+
+## Resource Management and Sharing
+Kueue addresses the challenge of **resource constraints** in both on-premises and cloud environments. It provides:
+- An easy way to fairly and efficiently share resources
+- Improved management of quota and cost
+
+## Complementing Existing Kubernetes Functionality
+Kueue is designed to **work alongside other Kubernetes components** without duplicating their functions. It focuses on job queueing while leaving tasks like:
+- Autoscaling to cluster-autoscaler
+- Pod-to-node scheduling to kube-scheduler
+- Job lifecycle management to kube-controller
+
+## Batch System Deployment
+Kueue can be used to **deploy batch systems in a First-In-First-Out (FIFO) order** on platforms like Google Kubernetes Engine (GKE)
+
+## Enhanced Container Orchestration
+As part of the Kubernetes ecosystem, Kueue contributes to the broader goal of **managing containerized workloads and services**, offering:
+- Improved automation
+- Support for declarative configuration
+
+## Integration with Ray Applications
+Kueue can be used in conjunction with KubeRay (https://docs.ray.io/en/latest/index.html) to **orchestrate Ray applications running on GKE**, supporting:
+- Priority scheduling
+- Gang scheduling
+
+## Integration with KubeFlow
+Kubernetes Kueue integrates with KubeFlow (https://www.kubeflow.org/) in several ways to enhance machine learning workflows and resource management.
+- Built-in Support for Kubeflow Jobs
+- Running Kueue-Managed Kubeflow Jobs
+- Resource Optimization for ML Training
+- Enhanced Job Queueing for ML Workflows
+- Scheduler Integration
 
 # Key Features
 
