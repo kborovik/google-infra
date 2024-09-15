@@ -18,8 +18,6 @@ app_id := gcp
 
 gke_name := $(app_id)-01
 
-kueue_version := 0.8.1
-
 root_dir := $(abspath .)
 
 terraform_dir := $(root_dir)/terraform
@@ -216,7 +214,19 @@ kube-clean:
 # Kueue deployment
 ###############################################################################
 
+kueue_version ?= 0.8.1
+kueue_namespace ?= kueue-system
+
+kueue_settings += 
+
 kueue: kueue-core kueue-api
+
+kueue-helm-template: $(KUBECONFIG)
+	helm template kueue kubernetes/charts/kueue/ --namespace $(kueue_namespace)
+
+kueue-helm-install: $(KUBECONFIG)
+	helm upgrade kueue kubernetes/charts/kueue/ --namespace $(kueue_namespace) \
+	--install --create-namespace --wait --timeout=10m --atomic
 
 kueue-core: $(KUBECONFIG)
 	$(call header,Deploying Kueue Core v$(kueue_version))
@@ -317,7 +327,7 @@ echo "$(green)$(1)$(reset) - $(white)$(2)$(reset)"
 endef
 
 define var
-echo "$(magenta)$(1)$(reset): $(yellow)$(2)$(reset)"
+echo "$(magenta)$(1)$(reset)=$(yellow)$(2)$(reset)"
 endef
 
 prompt:
