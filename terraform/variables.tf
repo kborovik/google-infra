@@ -17,7 +17,7 @@ variable "google_project" {
 variable "google_region" {
   description = "Default GCP region"
   type        = string
-  default     = "us-east5"
+  default     = "us-central1"
 }
 
 variable "google_network" {

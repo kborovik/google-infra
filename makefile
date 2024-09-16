@@ -251,33 +251,6 @@ kueue-clean:
 	kubectl delete -f https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/manifests.yaml
 
 ###############################################################################
-# Checkov
-###############################################################################
-
-checkov_args := --quiet --compact --deep-analysis --soft-fail --directory $(terraform_dir)
-
-checkov:
-	$(call header,Run Checkov with baseline)
-	checkov $(checkov_args) --baseline $(terraform_dir)/.checkov.baseline
-
-checkov-no-baseline:
-	$(call header,Run Checkov NO baseline)
-	checkov $(checkov_args)
-
-checkov-create-baseline:
-	$(call header,Create Checkov baseline)
-	checkov --create-baseline --directory $(terraform_dir)
-
-checkov-clean:
-	rm -rf .$(terraform_dir)/.checkov.baseline
-
-checkov-install:
-	pipx install checkov
-
-checkov-upgrade:
-	pipx upgrade checkov
-
-###############################################################################
 # Repo Version
 ###############################################################################
 
@@ -296,7 +269,7 @@ release:
 	$(if $(shell git diff --name-only --exit-code),$(error ==> make version <==),)
 	$(if $(shell git diff --staged --name-only --exit-code),$(error ==> make commit <==),)
 	$(eval git_current_branch := $(shell git branch --show-current))
-	$(if $(shell git diff --name-only --exit-code HEAD origin/$(git_current_branch)),$(error ==> git push <==),)
+	$(if $(shell git diff --name-only --exit-code $(git_current_branch) origin/$(git_current_branch)),$(error ==> git push <==),)
 	echo -n "$(blue)GitHub deploy $(yellow)$(google_project)$(reset)? $(green)(yes/no)$(reset)"
 	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
 	git tag --force $(google_project) -m "$(google_project)"
