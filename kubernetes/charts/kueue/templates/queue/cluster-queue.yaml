@@ -1,0 +1,20 @@
+---
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: ClusterQueue
+metadata:
+  name: cluster-queue
+  labels:
+  {{- include "kueue.labels" . | nindent 4 }}
+spec:
+  namespaceSelector: {}
+  resourceGroups:
+    - coveredResources: [cpu, memory, pods]
+      flavors:
+        - name: default-flavor
+          resources:
+            - name: cpu
+              nominalQuota: 16
+            - name: memory
+              nominalQuota: 64Gi
+            - name: pods
+              nominalQuota: 8

@@ -215,40 +215,29 @@ kube-clean:
 ###############################################################################
 
 kueue_version ?= 0.8.1
+kueue_chart ?= kubernetes/charts/kueue
 kueue_namespace ?= kueue-system
 
-kueue_settings += 
+kueue_settings +=
 
-kueue: kueue-core kueue-api
+kueue: kueuectl kueue-helm-install
 
 kueue-helm-template: $(KUBECONFIG)
-	helm template kueue kubernetes/charts/kueue/ --namespace $(kueue_namespace)
+	helm template kueue $(kueue_chart) --namespace $(kueue_namespace)
 
 kueue-helm-install: $(KUBECONFIG)
-	helm upgrade kueue kubernetes/charts/kueue/ --namespace $(kueue_namespace) \
+	helm upgrade kueue $(kueue_chart) --namespace $(kueue_namespace) \
 	--install --create-namespace --wait --timeout=10m --atomic
 
-kueue-core: $(KUBECONFIG)
-	$(call header,Deploying Kueue Core v$(kueue_version))
-	set -e
-	kubectl apply --server-side -f https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/manifests.yaml
-	while ! kubectl wait deploy/kueue-controller-manager --namespace kueue-system --for=condition=available 2>/dev/null; do 
-		echo "Waiting for Kueue controller-manager to start..."; sleep 5; 
-	done
-	$(call header,Deployed Kueue Core v$(kueue_version))
-	kubectl get deployments.apps --namespace kueue-system
+kueuectl_bin := ~/.local/bin/kueuectl
 
-kueue-api:
-	$(call header,Deploying Kueue API)
-	kubectl apply --server-side -f https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/visibility-api.yaml
-	$(call header,Deployed Kueue API)
-	kubectl get svc --namespace kueue-system kueue-visibility-server
+kueuectl: $(kueuectl_bin)
 
-kueue-clean:
-	$(call header,Deleting Kueue deployments)
+$(kueuectl_bin):
+	$(call header,Install kueuectl)
 	set -e
-	kubectl delete -f https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/visibility-api.yaml
-	kubectl delete -f https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/manifests.yaml
+	wget -q https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/kubectl-kueue-linux-amd64 -O $(@)
+	chmod 755 $(@)
 
 ###############################################################################
 # Repo Version

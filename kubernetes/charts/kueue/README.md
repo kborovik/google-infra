@@ -87,58 +87,24 @@ Kueue is designed as a **cloud-native job queueing system** for batch, HPC, AI/M
 
 - Kubernetes cluster with version 1.25 or newer.
 - The `SuspendJob` feature gate is enabled. (enabled by default in Kubernetes 1.22 or newer)
-- HELM v3.0 or newer is required to install the HELM chart
+- HELM v3.0 or newer is required to install the HELM chart [HELM](https://helm.sh/)
+- Kueue CLI [kueuectl](https://kueue.sigs.k8s.io/docs/reference/kubectl-kueue/installation/)
 
 ## HELM
 
-The Kueue HELM chart is not included in the official release artifacts. 
-To install Kueue using HELM, you must use the chart from the source code repository.
-
-- Checkout Kueue GitHub repository
-
-```shell
-git clone git@github.com:kubernetes-sigs/kueue.git
-```
-
-- Install HELM chart
+Deploy Kueue with HELM chart.
 
 ```shell
 cd kueue/charts
-helm install kueue kueue/ --create-namespace --namespace kueue-system
+helm install kueue <helm_chart_path> --create-namespace --namespace kueue-system
 ```
 
-## kubectl
-
-The kubectl manifest is included in the official release artifacts.
-
-- Set Kueue version:
+## Kueue CLI
 
 ```shell
-export kueue_version=0.8.1
-```
-
-- Install a released version of Kueue:
-
-```shell
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/kueue/releases/download/v${kueue_version}/manifests.yaml
-```
-
-- Wait for Kueue to be fully available:
-
-```shell
-kubectl wait deploy/kueue-controller-manager --namespace kueue-system --for=condition=available --timeout=5m
-```
-
-- Add metrics scraping for prometheus-operator:
-
-```shell
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/kueue/releases/download/v${kueue_version}/prometheus.yaml
-```
-
-- Add visibility API to monitor pending workloads:
-
-```shell
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/kueue/releases/download/v${kueue_version}/visibility-api.yaml
+export kueue_version="0.8.1"
+wget -q https://github.com/kubernetes-sigs/kueue/releases/download/v${kueue_version}/kubectl-kueue-linux-amd64 -O ~/.local/bin/kueuectl
+chmod 755 ~/.local/bin/kueuectl
 ```
 
 # Kueue Concepts

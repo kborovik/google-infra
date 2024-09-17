@@ -1,0 +1,25 @@
+---
+apiVersion: kueue.x-k8s.io/v1beta1
+kind: Workload
+metadata:
+  name: kueue-demo
+  namespace: kueue-demo
+  labels:
+  {{- include "kueue.labels" . | nindent 4 }}
+spec:
+  active: true
+  queueName: kueue-demo
+  podSets:
+    - count: 4
+      name: main
+      template:
+        spec:
+          containers:
+            - image: gcr.io/k8s-staging-perf-tests/sleep:latest
+              imagePullPolicy: Always
+              name: container
+              resources:
+                requests:
+                  cpu: 1
+                  memory: 2Gi
+          restartPolicy: Never
