@@ -196,14 +196,16 @@ google-project:
 
 KUBECONFIG ?= $(HOME)/.kube/config
 
-kube: kube-clean kube-auth
+kube: kube-clean kube-auth kube-info
 
 kube-auth: $(KUBECONFIG)
 
 $(KUBECONFIG):
 	$(call header,Get Kubernetes credentials)
-	set -e
 	gcloud container clusters get-credentials --zone=$(google_region) $(gke_name)
+
+kube-info:
+	$(call header,Get Kubernetes cluster info)
 	kubectl cluster-info
 
 kube-clean:
@@ -220,30 +222,45 @@ kueue_namespace ?= kueue-system
 
 kueue_settings +=
 
-kueue: kueuectl kueue-helm-install
+kueue-install: kueuectl kueue-helm-install
+
+kueue-configure: kueue-cluster-flavour kueue-cluster-queue kueue-local-queue
 
 kueue-helm-template: $(KUBECONFIG)
 	helm template kueue $(kueue_chart) --namespace $(kueue_namespace)
 
 kueue-helm-install: $(KUBECONFIG)
+	$(info Installing Kueue Helm Chart)
 	helm upgrade kueue $(kueue_chart) --namespace $(kueue_namespace) \
 	--install --create-namespace --wait --timeout=10m --atomic
 
 kueue-cluster-flavour:
 	$(info Creating Kubernetes Resource Flavour)
 	kubectl apply -f kubernetes/queue/resource-flavor.yaml
-	kubectl get resourceflavors.kueue.x-k8s.io --output yaml
+	kubectl get resourceflavors.kueue.x-k8s.io --output yaml | yq
 
 kueue-cluster-queue:
 	$(info Creating Kueue Cluster Queue)
 	kubectl apply -f kubernetes/queue/cluster-queue.yaml
-	kubectl get clusterqueues.kueue.x-k8s.io --output yaml
+	kubectl get clusterqueues.kueue.x-k8s.io --output yaml | yq
 
 kueue-local-queue:
 	$(info Creating Kueue Local Queue)
-	kubectl create namespace kueue-demo 2>/dev/null || true
+	kubectl create namespace demo-jobs 2>/dev/null || true
+	kubectl config set-context --current --namespace=demo-jobs
 	kubectl apply -f kubernetes/queue/local-queue.yaml
-	kubectl get localqueues.kueue.x-k8s.io --namespace kueue-demo --output yaml | yq
+	kubectl get localqueues.kueue.x-k8s.io --namespace demo-jobs --output yaml | yq
+
+jobs-create:
+	$(info Start Kueue Jobs)
+	kubectl create -f kubernetes/queue/jobs.yaml
+
+jobs-status:
+	$(info Start Kueue Jobs)
+	kubectl get jobs -n demo-jobs
+
+workload-status:
+	kueuectl list workload
 
 kueuectl_bin := ~/.local/bin/kueuectl
 

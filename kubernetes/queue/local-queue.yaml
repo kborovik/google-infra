@@ -2,7 +2,7 @@
 apiVersion: kueue.x-k8s.io/v1beta1
 kind: LocalQueue
 metadata:
-  name: kueue-demo
-  namespace: kueue-demo
+  name: demo-jobs
+  namespace: demo-jobs
 spec:
-  clusterQueue: kueue-demo
+  clusterQueue: demo-jobs
