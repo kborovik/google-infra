@@ -4,8 +4,6 @@ kind: Workload
 metadata:
   name: kueue-demo
   namespace: kueue-demo
-  labels:
-  {{- include "kueue.labels" . | nindent 4 }}
 spec:
   active: true
   queueName: kueue-demo
@@ -15,9 +13,9 @@ spec:
       template:
         spec:
           containers:
-            - image: gcr.io/k8s-staging-perf-tests/sleep:latest
+            - name: container
+              image: gcr.io/k8s-staging-perf-tests/sleep:latest
               imagePullPolicy: Always
-              name: container
               resources:
                 requests:
                   cpu: 1

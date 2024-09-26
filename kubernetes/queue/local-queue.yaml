@@ -4,7 +4,5 @@ kind: LocalQueue
 metadata:
   name: kueue-demo
   namespace: kueue-demo
-  labels:
-  {{- include "kueue.labels" . | nindent 4 }}
 spec:
-  clusterQueue: cluster-queue
+  clusterQueue: kueue-demo

@@ -229,6 +229,22 @@ kueue-helm-install: $(KUBECONFIG)
 	helm upgrade kueue $(kueue_chart) --namespace $(kueue_namespace) \
 	--install --create-namespace --wait --timeout=10m --atomic
 
+kueue-cluster-flavour:
+	$(info Creating Kubernetes Resource Flavour)
+	kubectl apply -f kubernetes/queue/resource-flavor.yaml
+	kubectl get resourceflavors.kueue.x-k8s.io --output yaml
+
+kueue-cluster-queue:
+	$(info Creating Kueue Cluster Queue)
+	kubectl apply -f kubernetes/queue/cluster-queue.yaml
+	kubectl get clusterqueues.kueue.x-k8s.io --output yaml
+
+kueue-local-queue:
+	$(info Creating Kueue Local Queue)
+	kubectl create namespace kueue-demo 2>/dev/null || true
+	kubectl apply -f kubernetes/queue/local-queue.yaml
+	kubectl get localqueues.kueue.x-k8s.io --namespace kueue-demo --output yaml | yq
+
 kueuectl_bin := ~/.local/bin/kueuectl
 
 kueuectl: $(kueuectl_bin)

@@ -109,5 +109,9 @@ resource "google_container_cluster" "gke1" {
       display_name = "Bell Canada"
       cidr_block   = "184.147.0.0/16"
     }
+    cidr_blocks {
+      display_name = "Bell Canada"
+      cidr_block   = "184.144.0.0/16"
+    }
   }
 }
