@@ -115,7 +115,7 @@ resource "google_container_cluster" "gke1" {
     }
     cidr_blocks {
       display_name = "TD Canada"
-      cidr_block   = "142.205.130.0/24"
+      cidr_block   = "142.205.13.0/24"
     }
   }
 }
