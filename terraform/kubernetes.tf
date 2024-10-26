@@ -28,6 +28,7 @@ resource "google_project_iam_member" "gke1" {
 ###############################################################################
 
 resource "google_container_cluster" "gke1" {
+  count               = var.enable_gke ? 1 : 0
   name                = "${var.app_id}-01"
   project             = var.google_project
   location            = var.google_region

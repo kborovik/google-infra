@@ -7,3 +7,6 @@ google_network = {
   gke_svc = "10.128.48.0/20",
   gcp_svc = "10.128.240.0/20"
 }
+
+enable_gke = false
+enable_nat = false

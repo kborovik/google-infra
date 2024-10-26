@@ -31,3 +31,15 @@ variable "google_network" {
   })
   default = null
 }
+
+variable "enable_gke" {
+  description = "Enable GKE"
+  type        = bool
+  default     = false
+}
+
+variable "enable_nat" {
+  description = "Enable NAT"
+  type        = bool
+  default     = false
+}
