@@ -213,66 +213,6 @@ kube-clean:
 	rm -rf $(KUBECONFIG)
 
 ###############################################################################
-# Kueue deployment
-###############################################################################
-
-kueue_version ?= 0.8.1
-kueue_chart ?= kubernetes/charts/kueue
-kueue_namespace ?= kueue-system
-
-kueue_settings +=
-
-kueue-install: kueuectl kueue-helm-install
-
-kueue-configure: kueue-cluster-flavour kueue-cluster-queue kueue-local-queue
-
-kueue-helm-template: $(KUBECONFIG)
-	helm template kueue $(kueue_chart) --namespace $(kueue_namespace)
-
-kueue-helm-install: $(KUBECONFIG)
-	$(info Installing Kueue Helm Chart)
-	helm upgrade kueue $(kueue_chart) --namespace $(kueue_namespace) \
-	--install --create-namespace --wait --timeout=10m --atomic
-
-kueue-cluster-flavour:
-	$(info Creating Kubernetes Resource Flavour)
-	kubectl apply -f kubernetes/queue/resource-flavor.yaml
-	kubectl get resourceflavors.kueue.x-k8s.io --output yaml | yq
-
-kueue-cluster-queue:
-	$(info Creating Kueue Cluster Queue)
-	kubectl apply -f kubernetes/queue/cluster-queue.yaml
-	kubectl get clusterqueues.kueue.x-k8s.io --output yaml | yq
-
-kueue-local-queue:
-	$(info Creating Kueue Local Queue)
-	kubectl create namespace demo-jobs 2>/dev/null || true
-	kubectl config set-context --current --namespace=demo-jobs
-	kubectl apply -f kubernetes/queue/local-queue.yaml
-	kubectl get localqueues.kueue.x-k8s.io --namespace demo-jobs --output yaml | yq
-
-jobs-create:
-	$(info Start Kueue Jobs)
-	kubectl create -f kubernetes/queue/jobs.yaml
-
-jobs-status:
-	$(info Start Kueue Jobs)
-	kubectl get jobs -n demo-jobs
-
-workload-status:
-	kueuectl list workload
-
-kueuectl_bin := ~/.local/bin/kueuectl
-
-kueuectl: $(kueuectl_bin)
-
-$(kueuectl_bin):
-	$(call header,Install kueuectl)
-	set -e
-	wget -q https://github.com/kubernetes-sigs/kueue/releases/download/v$(kueue_version)/kubectl-kueue-linux-amd64 -O $(@)
-	chmod 755 $(@)
-
-###############################################################################
 # Repo Version
 ###############################################################################
 
