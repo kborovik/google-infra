@@ -134,7 +134,7 @@ terraform-clean:
 
 terraform-show:
 	cd $(terraform_dir)
-	terraform show
+	terraform show -no-color | bat -l hcl
 
 terraform-version:
 	$(call header,Terraform Version)

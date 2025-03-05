@@ -16,10 +16,10 @@ resource "google_service_account" "gke1" {
 }
 
 resource "google_project_iam_member" "gke1" {
-  count   = length(local.gke_project_roles)
-  project = var.google_project
-  role    = local.gke_project_roles[count.index]
-  member  = "serviceAccount:${google_service_account.gke1.email}"
+  for_each = toset(local.gke_project_roles)
+  project  = var.google_project
+  role     = each.value
+  member   = "serviceAccount:${google_service_account.gke1.email}"
 }
 
 ###############################################################################
@@ -53,8 +53,16 @@ resource "google_container_cluster" "gke1" {
     }
   }
 
+  workload_identity_config {
+    workload_pool = "${var.google_project}.svc.id.goog"
+  }
+
   release_channel {
     channel = "REGULAR"
+  }
+
+  enterprise_config {
+    desired_tier = "ENTERPRISE"
   }
 
   private_cluster_config {

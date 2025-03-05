@@ -4,11 +4,13 @@
 
 locals {
   google_project_services = [
+    "anthos.googleapis.com",
     "artifactregistry.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
     "container.googleapis.com",
     "containersecurity.googleapis.com",
+    "gkehub.googleapis.com",
     "iam.googleapis.com",
     "iamcredentials.googleapis.com",
     "iap.googleapis.com",
@@ -23,8 +25,8 @@ locals {
 }
 
 resource "google_project_service" "main" {
-  count                      = length(local.google_project_services)
-  service                    = local.google_project_services[count.index]
+  for_each                   = toset(local.google_project_services)
+  service                    = each.value
   disable_dependent_services = true
   disable_on_destroy         = false
 }
