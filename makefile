@@ -71,13 +71,13 @@ shutdown:
 clean: terraform-clean kube-clean
 
 lab5-gcp-dev1:
-	google_project=lab5-gcp-dev1 $(MAKE) terraform
+	google_project=$(@) $(MAKE) terraform
 
 lab5-gcp-uat1:
-	google_project=lab5-gcp-uat1 $(MAKE) terraform
+	google_project=$(@) $(MAKE) terraform
 
 lab5-gcp-prd1:
-	google_project=lab5-gcp-prd1 $(MAKE) terraform
+	google_project=$(@) $(MAKE) terraform
 
 ###############################################################################
 # Terraform
