@@ -23,5 +23,5 @@ gke_config = [
   }
 ]
 
-enable_gke = true
-enable_nat = true
+enable_gke = false
+enable_nat = false

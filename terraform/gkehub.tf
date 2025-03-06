@@ -33,3 +33,18 @@ resource "google_gke_hub_membership" "gke" {
     google_container_cluster.gke,
   ]
 }
+
+resource "google_gke_hub_feature" "multiclusteringress" {
+  name     = "multiclusteringress"
+  location = "global"
+
+  spec {
+    multiclusteringress {
+      config_membership = google_gke_hub_membership.gke[0].id
+    }
+  }
+
+  depends_on = [
+    google_project_service.main
+  ]
+}
