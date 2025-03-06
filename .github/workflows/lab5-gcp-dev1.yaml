@@ -29,6 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/kborovik/terraform:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - id: checkout
         name: Code Checkout
