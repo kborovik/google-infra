@@ -28,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/kborovik/terraform:latest
+    permissions:
+      packages: read
     steps:
       - id: checkout
         name: Code Checkout
