@@ -128,7 +128,8 @@ resource "google_container_cluster" "gke" {
   }
 
   depends_on = [
-    google_compute_subnetwork.gke_net,
     google_compute_network.main,
+    google_compute_subnetwork.gke_net,
+    google_project_service.main,
   ]
 }

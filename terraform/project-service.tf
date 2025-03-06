@@ -5,6 +5,8 @@
 locals {
   google_project_services = [
     "anthos.googleapis.com",
+    "anthosidentityservice.googleapis.com",
+    "anthospolicycontroller.googleapis.com",
     "artifactregistry.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
@@ -16,6 +18,8 @@ locals {
     "iap.googleapis.com",
     "logging.googleapis.com",
     "monitoring.googleapis.com",
+    "multiclusteringress.googleapis.com",
+    "multiclusterservicediscovery.googleapis.com",
     "networkmanagement.googleapis.com",
     "osconfig.googleapis.com",
     "servicenetworking.googleapis.com",
