@@ -31,7 +31,7 @@ jobs:
       image: ghcr.io/kborovik/terraform:latest
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.ACCESS_TOKEN }}
+        password: ${{ secrets.PACKAGES_TOKEN }}}
     steps:
       - id: checkout
         name: Code Checkout
@@ -57,6 +57,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/kborovik/terraform:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.PACKAGES_TOKEN }}}
     environment: lab5-gcp-dev1
     needs: terraform-plan
     if: ${{ success() && github.ref == 'refs/tags/lab5-gcp-dev1' }}

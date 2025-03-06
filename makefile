@@ -280,18 +280,3 @@ endef
 prompt:
 	echo -n "$(blue)Deploy $(yellow)$(google_project)? $(green)(yes/no)$(reset)"
 	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
-
-###############################################################################
-# Errors
-###############################################################################
-ifeq ($(shell which gcloud),)
-  $(error ==> Install Google CLI https://cloud.google.com/sdk/docs/install <==)
-endif
-
-ifeq ($(shell which terraform),)
-  $(error ==> Install terraform https://www.terraform.io/downloads <==)
-endif
-
-ifeq ($(shell which helm),)
-  $(error ==> Install helm https://helm.sh/ <==)
-endif
