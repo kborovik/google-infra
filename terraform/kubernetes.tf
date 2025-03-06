@@ -126,4 +126,9 @@ resource "google_container_cluster" "gke" {
       cidr_block   = "142.205.13.0/24"
     }
   }
+
+  depends_on = [
+    google_compute_subnetwork.gke_net,
+    google_compute_network.main,
+  ]
 }

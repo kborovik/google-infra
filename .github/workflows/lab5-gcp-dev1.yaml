@@ -25,7 +25,7 @@ permissions:
 
 jobs:
   terraform-plan:
-    runs-on: ubuntu-latest
+    runs-on: hashicorp/terraform:latest
     steps:
       - id: checkout
         name: Code Checkout
@@ -48,7 +48,7 @@ jobs:
           google_project=${{ env.google_project }} make settings terraform-plan
 
   terraform-apply:
-    runs-on: ubuntu-latest
+    runs-on: hashicorp/terraform:latest
     environment: lab5-gcp-dev1
     needs: terraform-plan
     if: ${{ success() && github.ref == 'refs/tags/lab5-gcp-dev1' }}
