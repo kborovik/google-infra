@@ -31,8 +31,6 @@ ifeq ($(wildcard $(terraform_tfvars)),)
   $(error ==> Missing configuration file $(terraform_tfvars) <==)
 endif
 
-docker_image := ghcr.io/kborovik/github-actions-runner:latest
-
 VERSION := $(file < VERSION)
 
 ###############################################################################
@@ -211,18 +209,6 @@ kube-info:
 kube-clean:
 	$(call header,Delete Kubernetes credentials)
 	rm -rf $(KUBECONFIG)
-
-###############################################################################
-# Docker
-###############################################################################
-docker_tag ?= latest
-docker_image := ghcr.io/kborovik/terraform:$(docker_tag)
-
-docker:
-	docker buildx build --tag $(docker_image) - < Dockerfile
-	docker login ghcr.io -u kborovik --password $(shell pass github/token/packages-full-access)
-	docker push $(docker_image)
-	docker image prune --force
 
 ###############################################################################
 # Repo Version
