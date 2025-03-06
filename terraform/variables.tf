@@ -24,11 +24,20 @@ variable "google_network" {
   description = "Google network address"
   type = object({
     project = string
-    gke_net = string
-    gke_pod = string
-    gke_svc = string
     gcp_svc = string
   })
+  default = null
+}
+
+variable "gke_config" {
+  description = "GKE configuration"
+  type = list(object({
+    gke_name   = string
+    gke_region = string
+    gke_net    = string
+    gke_pod    = string
+    gke_svc    = string
+  }))
   default = null
 }
 

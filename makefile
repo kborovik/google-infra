@@ -31,8 +31,6 @@ ifeq ($(wildcard $(terraform_tfvars)),)
   $(error ==> Missing configuration file $(terraform_tfvars) <==)
 endif
 
-docker_image := ghcr.io/kborovik/github-actions-runner:latest
-
 VERSION := $(file < VERSION)
 
 ###############################################################################
@@ -134,7 +132,7 @@ terraform-clean:
 
 terraform-show:
 	cd $(terraform_dir)
-	terraform show
+	terraform show -no-color | bat -l hcl
 
 terraform-version:
 	$(call header,Terraform Version)
@@ -268,18 +266,3 @@ endef
 prompt:
 	echo -n "$(blue)Deploy $(yellow)$(google_project)? $(green)(yes/no)$(reset)"
 	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
-
-###############################################################################
-# Errors
-###############################################################################
-ifeq ($(shell which gcloud),)
-  $(error ==> Install Google CLI https://cloud.google.com/sdk/docs/install <==)
-endif
-
-ifeq ($(shell which terraform),)
-  $(error ==> Install terraform https://www.terraform.io/downloads <==)
-endif
-
-ifeq ($(shell which helm),)
-  $(error ==> Install helm https://helm.sh/ <==)
-endif
