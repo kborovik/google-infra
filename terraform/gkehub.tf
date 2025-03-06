@@ -18,17 +18,18 @@ resource "google_gke_hub_fleet" "fleet" {
   }
 }
 
-resource "google_gke_hub_membership" "gke1" {
-  membership_id = google_container_cluster.gke1[0].name
-  location      = var.google_region
+# resource "google_gke_hub_membership" "gke1" {
+#   count         = var.enable_gke ? 1 : 0
+#   membership_id = google_container_cluster.gke1[0].name
+#   location      = var.google_region
 
-  endpoint {
-    gke_cluster {
-      resource_link = "//container.googleapis.com/${google_container_cluster.gke1[0].id}"
-    }
-  }
+#   endpoint {
+#     gke_cluster {
+#       resource_link = "//container.googleapis.com/${google_container_cluster.gke1[0].id}"
+#     }
+#   }
 
-  depends_on = [
-    google_container_cluster.gke1
-  ]
-}
+#   depends_on = [
+#     google_container_cluster.gke1
+#   ]
+# }
