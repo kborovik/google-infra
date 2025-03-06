@@ -31,7 +31,7 @@ jobs:
       image: ghcr.io/kborovik/terraform:latest
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.ACCESS_TOKEN }}
     steps:
       - id: checkout
         name: Code Checkout
