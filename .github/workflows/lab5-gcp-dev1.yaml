@@ -22,14 +22,13 @@ on:
 permissions:
   id-token: write
   contents: read
+  packages: read
 
 jobs:
   terraform-plan:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/kborovik/terraform:latest
-    permissions:
-      packages: read
     steps:
       - id: checkout
         name: Code Checkout
