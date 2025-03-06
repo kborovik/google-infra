@@ -213,6 +213,18 @@ kube-clean:
 	rm -rf $(KUBECONFIG)
 
 ###############################################################################
+# Docker
+###############################################################################
+docker_tag ?= latest
+docker_image := ghcr.io/kborovik/terraform:$(docker_tag)
+
+docker:
+	docker buildx build --tag $(docker_image) - < Dockerfile
+	docker login ghcr.io -u kborovik --password $(shell pass github/token/packages-full-access)
+	docker push $(docker_image)
+	docker image prune --force
+
+###############################################################################
 # Repo Version
 ###############################################################################
 

@@ -27,7 +27,7 @@ jobs:
   terraform-plan:
     runs-on: ubuntu-latest
     container:
-      image: hashicorp/terraform:latest
+      image: ghcr.io/kborovik/terraform:latest
     steps:
       - id: checkout
         name: Code Checkout
@@ -52,7 +52,7 @@ jobs:
   terraform-apply:
     runs-on: ubuntu-latest
     container:
-      image: hashicorp/terraform:latest
+      image: ghcr.io/kborovik/terraform:latest
     environment: lab5-gcp-dev1
     needs: terraform-plan
     if: ${{ success() && github.ref == 'refs/tags/lab5-gcp-dev1' }}
