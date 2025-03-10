@@ -46,9 +46,3 @@ variable "enable_gke" {
   type        = bool
   default     = false
 }
-
-variable "enable_nat" {
-  description = "Enable NAT"
-  type        = bool
-  default     = false
-}

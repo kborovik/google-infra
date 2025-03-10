@@ -5,6 +5,7 @@
 locals {
   google_project_services = [
     "anthos.googleapis.com",
+    "anthosconfigmanagement.googleapis.com",
     "anthosidentityservice.googleapis.com",
     "anthospolicycontroller.googleapis.com",
     "artifactregistry.googleapis.com",

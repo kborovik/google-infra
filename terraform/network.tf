@@ -52,26 +52,26 @@ resource "google_service_networking_connection" "google_service_network" {
 ###############################################################################
 
 resource "google_compute_address" "cloud_nat" {
-  count        = var.enable_nat ? 1 : 0
-  name         = "cloud-nat-${var.app_id}"
-  region       = var.google_region
+  count        = var.enable_gke ? length(var.gke_config) : 0
+  name         = "cloud-nat-${var.gke_config[count.index].gke_region}"
+  region       = var.gke_config[count.index].gke_region
   address_type = "EXTERNAL"
 }
 
 resource "google_compute_router" "main" {
-  count   = var.enable_nat ? 1 : 0
-  name    = "main"
-  region  = var.google_region
+  count   = var.enable_gke ? length(var.gke_config) : 0
+  name    = "router-${var.gke_config[count.index].gke_region}"
+  region  = var.gke_config[count.index].gke_region
   network = google_compute_network.main.id
 }
 
 resource "google_compute_router_nat" "main" {
-  count                              = var.enable_nat ? 1 : 0
-  name                               = "main"
-  region                             = var.google_region
-  router                             = google_compute_router.main[0].name
+  count                              = var.enable_gke ? length(var.gke_config) : 0
+  name                               = "nat-${var.gke_config[count.index].gke_region}"
+  region                             = var.gke_config[count.index].gke_region
+  router                             = google_compute_router.main[count.index].name
   nat_ip_allocate_option             = "MANUAL_ONLY"
-  nat_ips                            = [google_compute_address.cloud_nat[0].id]
+  nat_ips                            = [google_compute_address.cloud_nat[count.index].id]
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 

@@ -16,8 +16,6 @@ google_project ?= lab5-gcp-dev1
 
 app_id := gcp
 
-gke_name := $(app_id)-01
-
 root_dir := $(abspath .)
 
 terraform_dir := $(root_dir)/terraform
@@ -200,7 +198,8 @@ kube-auth: $(KUBECONFIG)
 
 $(KUBECONFIG):
 	$(call header,Get Kubernetes credentials)
-	gcloud container clusters get-credentials --zone=$(google_region) $(gke_name)
+	gcloud container clusters get-credentials --zone=us-central1 --project=$(google_project) gke-0
+	gcloud container clusters get-credentials --zone=us-east1 --project=$(google_project) gke-1
 
 kube-info:
 	$(call header,Get Kubernetes cluster info)

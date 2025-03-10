@@ -34,17 +34,35 @@ resource "google_gke_hub_membership" "gke" {
   ]
 }
 
-resource "google_gke_hub_feature" "multiclusteringress" {
-  name     = "multiclusteringress"
+resource "google_gke_hub_feature" "configmanagement" {
+  name     = "configmanagement"
   location = "global"
 
-  spec {
-    multiclusteringress {
-      config_membership = google_gke_hub_membership.gke[0].id
-    }
-  }
-
   depends_on = [
+    google_gke_hub_membership.gke,
     google_project_service.main
   ]
+}
+
+resource "google_gke_hub_feature_membership" "configmanagement" {
+  count               = var.enable_gke ? length(var.gke_config) : 0
+  feature             = google_gke_hub_feature.configmanagement.name
+  membership          = google_gke_hub_membership.gke[count.index].membership_id
+  membership_location = google_gke_hub_membership.gke[count.index].location
+  location            = "global"
+
+  configmanagement {
+    management = "MANAGEMENT_AUTOMATIC"
+    config_sync {
+      enabled       = true
+      prevent_drift = true
+      source_format = "hierarchy"
+      stop_syncing  = false
+      git {
+        sync_repo   = "https://github.com/kborovik/gke-hub-config-mgmt.git"
+        sync_branch = "main"
+        secret_type = "none"
+      }
+    }
+  }
 }
