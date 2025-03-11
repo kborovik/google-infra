@@ -213,16 +213,10 @@ kube-clean:
 # Repo Version
 ###############################################################################
 
-.PHONY: version commit merge
-
-version:
+commit:
 	version=$$(date +%Y.%m.%d-%H%M)
-	echo "$$version" >| VERSION
-	$(call header,Version: $$(cat VERSION))
 	git add --all
-
-commit: version
-	git commit -m "$$(cat VERSION)"
+	git commit -m "$$version"
 
 release:
 	$(if $(shell git diff --name-only --exit-code),$(error ==> make version <==),)

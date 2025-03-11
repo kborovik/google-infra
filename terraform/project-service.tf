@@ -11,6 +11,7 @@ locals {
     "artifactregistry.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "compute.googleapis.com",
+    "connectgateway.googleapis.com",
     "container.googleapis.com",
     "containersecurity.googleapis.com",
     "gkehub.googleapis.com",
