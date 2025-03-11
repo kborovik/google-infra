@@ -16,10 +16,10 @@ resource "google_service_account" "gke1" {
 }
 
 resource "google_project_iam_member" "gke1" {
-  count   = length(local.gke_project_roles)
-  project = var.google_project
-  role    = local.gke_project_roles[count.index]
-  member  = "serviceAccount:${google_service_account.gke1.email}"
+  for_each = toset(local.gke_project_roles)
+  project  = var.google_project
+  role     = each.value
+  member   = "serviceAccount:${google_service_account.gke1.email}"
 }
 
 ###############################################################################
@@ -27,20 +27,19 @@ resource "google_project_iam_member" "gke1" {
 # All GKE configuration choices based on the single-application workload.
 ###############################################################################
 
-resource "google_container_cluster" "gke1" {
-  count               = var.enable_gke ? 1 : 0
-  name                = "${var.app_id}-01"
-  project             = var.google_project
-  location            = var.google_region
+resource "google_container_cluster" "gke" {
+  count               = var.enable_gke ? length(var.gke_config) : 0
+  name                = var.gke_config[count.index].gke_name
+  location            = var.gke_config[count.index].gke_region
   deletion_protection = false
   enable_autopilot    = true
 
   network    = google_compute_network.main.id
-  subnetwork = google_compute_subnetwork.gke_net.id
+  subnetwork = google_compute_subnetwork.gke_net[count.index].id
 
   ip_allocation_policy {
-    services_secondary_range_name = google_compute_subnetwork.gke_net.secondary_ip_range[1].range_name
-    cluster_secondary_range_name  = google_compute_subnetwork.gke_net.secondary_ip_range[0].range_name
+    services_secondary_range_name = google_compute_subnetwork.gke_net[count.index].secondary_ip_range[1].range_name
+    cluster_secondary_range_name  = google_compute_subnetwork.gke_net[count.index].secondary_ip_range[0].range_name
   }
 
   cluster_autoscaling {
@@ -53,8 +52,16 @@ resource "google_container_cluster" "gke1" {
     }
   }
 
+  workload_identity_config {
+    workload_pool = "${var.google_project}.svc.id.goog"
+  }
+
   release_channel {
     channel = "REGULAR"
+  }
+
+  enterprise_config {
+    desired_tier = "ENTERPRISE"
   }
 
   private_cluster_config {
@@ -100,7 +107,7 @@ resource "google_container_cluster" "gke1" {
     gcp_public_cidrs_access_enabled = true
     cidr_blocks {
       display_name = "GCP Internal Network"
-      cidr_block   = google_compute_subnetwork.gke_net.ip_cidr_range
+      cidr_block   = google_compute_subnetwork.gke_net[count.index].ip_cidr_range
     }
     cidr_blocks {
       display_name = "Bell Canada"
@@ -119,4 +126,10 @@ resource "google_container_cluster" "gke1" {
       cidr_block   = "142.205.13.0/24"
     }
   }
+
+  depends_on = [
+    google_compute_network.main,
+    google_compute_subnetwork.gke_net,
+    google_project_service.main,
+  ]
 }

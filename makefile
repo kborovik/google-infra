@@ -16,8 +16,6 @@ google_project ?= lab5-gcp-dev1
 
 app_id := gcp
 
-gke_name := $(app_id)-01
-
 root_dir := $(abspath .)
 
 terraform_dir := $(root_dir)/terraform
@@ -30,8 +28,6 @@ terraform_prefix := $(app_id)
 ifeq ($(wildcard $(terraform_tfvars)),)
   $(error ==> Missing configuration file $(terraform_tfvars) <==)
 endif
-
-docker_image := ghcr.io/kborovik/github-actions-runner:latest
 
 VERSION := $(file < VERSION)
 
@@ -134,7 +130,7 @@ terraform-clean:
 
 terraform-show:
 	cd $(terraform_dir)
-	terraform show
+	terraform show -no-color | bat -l hcl
 
 terraform-version:
 	$(call header,Terraform Version)
@@ -202,7 +198,8 @@ kube-auth: $(KUBECONFIG)
 
 $(KUBECONFIG):
 	$(call header,Get Kubernetes credentials)
-	gcloud container clusters get-credentials --zone=$(google_region) $(gke_name)
+	gcloud container clusters get-credentials --zone=us-central1 --project=$(google_project) gke-0
+	gcloud container clusters get-credentials --zone=us-east1 --project=$(google_project) gke-1
 
 kube-info:
 	$(call header,Get Kubernetes cluster info)
@@ -268,18 +265,3 @@ endef
 prompt:
 	echo -n "$(blue)Deploy $(yellow)$(google_project)? $(green)(yes/no)$(reset)"
 	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
-
-###############################################################################
-# Errors
-###############################################################################
-ifeq ($(shell which gcloud),)
-  $(error ==> Install Google CLI https://cloud.google.com/sdk/docs/install <==)
-endif
-
-ifeq ($(shell which terraform),)
-  $(error ==> Install terraform https://www.terraform.io/downloads <==)
-endif
-
-ifeq ($(shell which helm),)
-  $(error ==> Install helm https://helm.sh/ <==)
-endif
