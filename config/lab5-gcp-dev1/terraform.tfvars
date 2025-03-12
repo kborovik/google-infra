@@ -23,4 +23,4 @@ gke_config = [
   }
 ]
 
-enable_gke = true
+enable_gke = false

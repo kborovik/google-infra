@@ -2,12 +2,6 @@
 # General project settings
 ###############################################################################
 
-variable "app_id" {
-  description = "Application ID to identify GCP resources"
-  type        = string
-  default     = "gcp"
-}
-
 variable "google_project" {
   description = "GCP Project Id"
   type        = string
