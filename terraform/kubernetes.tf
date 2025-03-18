@@ -122,7 +122,7 @@ resource "google_container_cluster" "gke" {
       cidr_block   = "184.144.0.0/16"
     }
     cidr_blocks {
-      display_name = "TD Canada"
+      display_name = "Toronto Canada"
       cidr_block   = "142.205.13.0/24"
     }
   }
