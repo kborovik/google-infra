@@ -32,7 +32,8 @@ resource "google_container_cluster" "gke" {
   name                = var.gke_config[count.index].gke_name
   location            = var.gke_config[count.index].gke_region
   deletion_protection = false
-  enable_autopilot    = true
+  enable_autopilot    = false
+  initial_node_count  = 1
 
   network    = google_compute_network.main.id
   subnetwork = google_compute_subnetwork.gke_net[count.index].id
@@ -40,16 +41,6 @@ resource "google_container_cluster" "gke" {
   ip_allocation_policy {
     services_secondary_range_name = google_compute_subnetwork.gke_net[count.index].secondary_ip_range[1].range_name
     cluster_secondary_range_name  = google_compute_subnetwork.gke_net[count.index].secondary_ip_range[0].range_name
-  }
-
-  cluster_autoscaling {
-    auto_provisioning_defaults {
-      service_account = google_service_account.gke1.email
-      management {
-        auto_repair  = true
-        auto_upgrade = true
-      }
-    }
   }
 
   workload_identity_config {
@@ -125,6 +116,12 @@ resource "google_container_cluster" "gke" {
       display_name = "Toronto Canada"
       cidr_block   = "142.205.13.0/24"
     }
+  }
+
+  node_config {
+    machine_type = "e2-highmem-2"
+    disk_type    = "pd-balanced"
+    preemptible  = true
   }
 
   depends_on = [

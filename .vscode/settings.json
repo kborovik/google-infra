@@ -1,8 +1,12 @@
 {
   "cSpell.words": [
+    "highmem",
     "kborovik",
     "KUBECONFIG",
     "Kueue",
-    "kueuectl"
+    "kueuectl",
+    "policycontroller",
+    "preemptible",
+    "servicemesh"
   ]
 }

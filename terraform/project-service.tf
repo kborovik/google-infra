@@ -20,6 +20,8 @@ locals {
     "iamcredentials.googleapis.com",
     "iap.googleapis.com",
     "logging.googleapis.com",
+    "mesh.googleapis.com",
+    "meshconfig.googleapis.com",
     "monitoring.googleapis.com",
     "multiclusteringress.googleapis.com",
     "multiclusterservicediscovery.googleapis.com",

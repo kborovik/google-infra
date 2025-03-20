@@ -4,11 +4,13 @@
 
 MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 
+default: help
+
 ###############################################################################
 # Variables
 ###############################################################################
 
-google_project ?= lab5-gcp-dev1
+google_project ?= lab5-gcp-uat1
 
 ###############################################################################
 # Settings
@@ -29,42 +31,25 @@ ifeq ($(wildcard $(terraform_tfvars)),)
   $(error ==> Missing configuration file $(terraform_tfvars) <==)
 endif
 
-VERSION := $(file < VERSION)
-
 ###############################################################################
 # Info
 ###############################################################################
-
-default: settings
-
-help:
-	$(call header,Help)
-	$(call help,make google,Configure Google CLI)
-	$(call help,make google-auth,Authenticate Google CLI)
-	$(call help,make terraform,Run Terraform plan and apply)
-	$(call help,make shutdown,Remove selected Terraform resources)
-	$(call help,make release,Trigger GitHub pipeline deployment)
 
 settings: terraform-config
 	$(call header,Settings)
 	$(call var,google_project,$(google_project))
 	$(call var,gcloud_project,$(shell gcloud config list --format=json | jq -r '.core.project'))
 
-secretes:
-	$(call header,Secrets)
-
 ###############################################################################
 # End-to-End Pipeline
 ###############################################################################
 
-deploy : terraform
+clean: terraform-clean kube-clean ## Remove Terraform and Kubernetes configuration
 
-shutdown: 
-	google_project=lab5-gcp-dev1 $(MAKE) terraform-destroy-selected
-	google_project=lab5-gcp-uat1 $(MAKE) terraform-destroy-selected
-	google_project=lab5-gcp-prd1 $(MAKE) terraform-destroy-selected
-
-clean: terraform-clean kube-clean
+shutdown: ## Destroy all GCP resources
+	google_project=lab5-gcp-dev1 $(MAKE) terraform-destroy
+	google_project=lab5-gcp-uat1 $(MAKE) terraform-destroy
+	google_project=lab5-gcp-prd1 $(MAKE) terraform-destroy
 
 lab5-gcp-dev1:
 	google_project=$(@) $(MAKE) terraform
@@ -81,11 +66,12 @@ lab5-gcp-prd1:
 
 .PHONY: terraform
 
-terraform: terraform-plan prompt terraform-apply
+terraform: terraform-plan prompt terraform-apply ## Terraform Plan and Apply
 
-terraform-fmt: terraform-version
+terraform-fmt:
 	$(call header,Check Terraform Code Format)
 	cd $(terraform_dir)
+	terraform version
 	terraform fmt -check -recursive
 
 terraform-config:
@@ -101,42 +87,31 @@ terraform-init: terraform-fmt terraform-config
 	cd $(terraform_dir)
 	terraform init -upgrade -input=false -reconfigure -backend-config="bucket=$(terraform_bucket)" -backend-config="prefix=$(terraform_prefix)"
 
-terraform-plan: terraform-init terraform-validate
+terraform-plan: terraform-init terraform-validate ## Terraform Plan
 	$(call header,Run Terraform Plan)
 	cd $(terraform_dir)
 	terraform plan -input=false -refresh=true -var-file="$(terraform_tfvars)"
 
-terraform-apply: terraform-init terraform-validate
+terraform-apply: terraform-init terraform-validate ## Terraform Apply
 	$(call header,Run Terraform Apply)
 	set -e
 	cd $(terraform_dir)
 	terraform apply -auto-approve -input=false -refresh=true -var-file="$(terraform_tfvars)"
 
-terraform-destroy-all: terraform-init
+terraform-destroy: terraform-init ## Terraform Destroy
 	$(call header,Run Terraform Apply)
 	cd $(terraform_dir)
 	terraform apply -destroy -input=false -refresh=true -var-file="$(terraform_tfvars)"
-
-terraform-destroy-selected: terraform-init
-	$(call header,Run Terraform Apply)
-	cd $(terraform_dir)
-	terraform apply -auto-approve -destroy -var-file="$(terraform_tfvars)" \
-	-target=google_compute_address.cloud_nat \
-	-target=google_container_cluster.gke1
 
 terraform-clean:
 	$(call header,Delete Terraform providers and state)
 	-rm -rf $(terraform_dir)/.terraform
 
-terraform-show:
+terraform-show: ## Terraform Show State
 	cd $(terraform_dir)
 	terraform show -no-color | bat -l hcl
 
-terraform-version:
-	$(call header,Terraform Version)
-	terraform version
-
-terraform-state-list:
+terraform-list: ## Terraform List State
 	cd $(terraform_dir)
 	terraform state list
 
@@ -162,21 +137,19 @@ terraform-bucket:
 
 google_region := $(shell grep google_region $(terraform_tfvars) | cut -d '"' -f2)
 
-google: google-config
-
-google-auth:
+google-auth: ## Google CLI Auth
 	$(call header,Configure Google CLI)
 	gcloud auth revoke --all
 	gcloud auth login --update-adc --no-launch-browser
 
-google-config:
+google-config: ## Google CLI Config
 	set -e
 	gcloud auth application-default set-quota-project $(google_project)
 	gcloud config set core/project $(google_project)
 	gcloud config set compute/region $(google_region)
 	gcloud config list
 
-google-project:
+google-project: ## Create Google Project
 	$(call header,Create Google Project)
 	$(eval google_organization := $(shell pass lab5/google/organization_id))
 	$(eval google_billing_account := $(shell pass lab5/google/billing_account))
@@ -192,20 +165,18 @@ google-project:
 
 KUBECONFIG ?= $(HOME)/.kube/config
 
-kube: kube-clean kube-auth kube-info
-
-kube-auth: $(KUBECONFIG)
+kube-auth: $(KUBECONFIG) ## Kubernetes Auth
 
 $(KUBECONFIG):
 	$(call header,Get Kubernetes credentials)
 	gcloud container clusters get-credentials --zone=us-central1 --project=$(google_project) gke-0
 	gcloud container clusters get-credentials --zone=us-east1 --project=$(google_project) gke-1
 
-kube-info:
+kube-info: ## Kubernetes Info
 	$(call header,Get Kubernetes cluster info)
 	kubectl cluster-info
 
-kube-clean:
+kube-clean: ## Kubernetes Clean
 	$(call header,Delete Kubernetes credentials)
 	rm -rf $(KUBECONFIG)
 
@@ -213,10 +184,8 @@ kube-clean:
 # Repo Version
 ###############################################################################
 
-commit:
-	version=$$(date +%Y.%m.%d-%H%M)
-	git add --all
-	git commit -m "$$version"
+commit: ## Commit Changes
+	git commit -m "$(shell date +%Y.%m.%d-%H%M)"
 
 release:
 	$(if $(shell git diff --name-only --exit-code),$(error ==> make version <==),)
@@ -248,14 +217,17 @@ define header
 echo "$(blue)==> $(1) <==$(reset)"
 endef
 
-define help
-echo "$(green)$(1)$(reset) - $(white)$(2)$(reset)"
+define var
+echo "$(magenta)$(1)$(white): $(yellow)$(2)$(reset)"
 endef
 
-define var
-echo "$(magenta)$(1)$(reset)=$(yellow)$(2)$(reset)"
-endef
+help:
+	echo "$(blue)Usage: $(green)make [recipe]$(reset)"
+	echo "$(blue)Recipes:$(reset)"
+	awk 'BEGIN {FS = ":.*?## "; sort_cmd = "sort"} /^[a-zA-Z0-9_-]+:.*?## / \
+	{ printf "  \033[33m%-17s\033[0m %s\n", $$1, $$2 | sort_cmd; } \
+	END {close(sort_cmd)}' $(MAKEFILE_LIST)
 
 prompt:
-	echo -n "$(blue)Deploy $(yellow)$(google_project)? $(green)(yes/no)$(reset)"
-	read -p ": " answer && [ "$$answer" = "yes" ] || exit 1
+	printf "$(magenta)Continue $(white)? $(cyan)(yes/no)$(reset)"
+	read -p ": " answer && [ "$$answer" = "yes" ] || exit 127
