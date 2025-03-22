@@ -17,6 +17,11 @@ resource "google_gke_hub_fleet" "fleet" {
       vulnerability_mode = "VULNERABILITY_DISABLED"
     }
   }
+
+  depends_on = [
+    google_compute_network.main,
+    google_container_cluster.gke,
+  ]
 }
 
 resource "google_gke_hub_membership" "gke" {
@@ -32,6 +37,7 @@ resource "google_gke_hub_membership" "gke" {
 
   depends_on = [
     google_container_cluster.gke,
+    google_gke_hub_fleet.fleet,
   ]
 }
 
@@ -56,6 +62,10 @@ resource "google_gke_hub_feature_membership" "servicemesh" {
   mesh {
     management = "MANAGEMENT_AUTOMATIC"
   }
+
+  depends_on = [
+    google_gke_hub_membership.gke,
+  ]
 }
 
 resource "google_gke_hub_feature" "policycontroller" {
@@ -75,10 +85,22 @@ resource "google_gke_hub_feature" "policycontroller" {
 #   membership          = google_gke_hub_membership.gke[count.index].membership_id
 #   membership_location = google_gke_hub_membership.gke[count.index].location
 #   location            = "global"
+
+#   policycontroller {
+#     policy_controller_hub_config {
+#       policy_content {
+#         bundles {
+#           bundle_name         = ""
+#           exempted_namespaces = []
+#         }
+#       }
+#     }
+#   }
 # }
 
 # resource "google_gke_hub_feature" "configmanagement" {
 #   name     = "configmanagement"
+#   project  = var.google_project
 #   location = "global"
 
 #   depends_on = [
