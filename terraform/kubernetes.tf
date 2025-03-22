@@ -32,7 +32,6 @@ resource "google_container_cluster" "gke" {
   name                = var.gke_config[count.index].gke_name
   location            = var.gke_config[count.index].gke_region
   deletion_protection = false
-  enable_autopilot    = false
   initial_node_count  = 1
 
   network    = google_compute_network.main.id
@@ -65,18 +64,20 @@ resource "google_container_cluster" "gke" {
 
   logging_config {
     enable_components = [
+      "APISERVER",
+      "SCHEDULER",
       "SYSTEM_COMPONENTS",
       "WORKLOADS",
-      "SCHEDULER",
     ]
   }
 
   monitoring_config {
     enable_components = [
-      "SYSTEM_COMPONENTS",
-      "STORAGE",
       "DEPLOYMENT",
+      "HPA",
       "STATEFULSET",
+      "STORAGE",
+      "SYSTEM_COMPONENTS",
     ]
   }
 
