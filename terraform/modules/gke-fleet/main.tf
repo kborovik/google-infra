@@ -3,14 +3,14 @@
 ###############################################################################
 
 data "google_container_cluster" "cluster" {
-  for_each = var.gke_clusters
+  for_each = var.gke_fleet_clusters
   name     = each.value.name
   location = each.value.location
 }
 
 resource "google_gke_hub_fleet" "fleet" {
-  display_name = "fleet-${var.google_project}"
-  project      = var.google_project
+  display_name = "fleet-${var.gke_fleet_project}"
+  project      = var.gke_fleet_project
 
   default_cluster_config {
 
@@ -30,7 +30,7 @@ resource "google_gke_hub_fleet" "fleet" {
 }
 
 resource "google_gke_hub_membership" "gke" {
-  for_each      = var.gke_clusters
+  for_each      = var.gke_fleet_clusters
   membership_id = data.google_container_cluster.cluster[each.key].name
   location      = data.google_container_cluster.cluster[each.key].location
 
@@ -48,7 +48,7 @@ resource "google_gke_hub_membership" "gke" {
 
 resource "google_gke_hub_feature" "configmanagement" {
   name     = "configmanagement"
-  project  = var.google_project
+  project  = var.gke_fleet_project
   location = "global"
 
   depends_on = [
@@ -57,7 +57,7 @@ resource "google_gke_hub_feature" "configmanagement" {
 }
 
 resource "google_gke_hub_feature_membership" "configmanagement" {
-  for_each            = var.gke_clusters
+  for_each            = var.gke_fleet_clusters
   feature             = google_gke_hub_feature.configmanagement.name
   membership          = google_gke_hub_membership.gke[each.key].id
   membership_location = google_gke_hub_membership.gke[each.key].location
@@ -81,7 +81,7 @@ resource "google_gke_hub_feature_membership" "configmanagement" {
 
 # resource "google_gke_hub_feature" "servicemesh" {
 #   name     = "servicemesh"
-#   project  = var.google_project
+#   project  = var.gke_fleet_project
 #   location = "global"
 
 #   depends_on = [
@@ -108,7 +108,7 @@ resource "google_gke_hub_feature_membership" "configmanagement" {
 
 # resource "google_gke_hub_feature" "policycontroller" {
 #   name     = "policycontroller"
-#   project  = var.google_project
+#   project  = var.gke_fleet_project
 #   location = "global"
 
 #   depends_on = [

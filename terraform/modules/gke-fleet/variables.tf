@@ -2,19 +2,13 @@
 # Module Variables
 ###############################################################################
 
-variable "google_project" {
-  description = "GCP Project Id"
+variable "gke_fleet_project" {
+  description = "GKE Fleet Project"
   type        = string
   default     = "lab5-gcp-uat1"
 }
 
-variable "google_region" {
-  description = "Default GCP region"
-  type        = string
-  default     = "us-central1"
-}
-
-variable "gke_clusters" {
+variable "gke_fleet_clusters" {
   description = "Set of GKE clusters to be added to GKE Fleet"
   type = map(object({
     name     = string

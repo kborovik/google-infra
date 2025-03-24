@@ -7,12 +7,5 @@ terraform {
       version = "~>6.26.0"
     }
   }
-
-  backend "gcs" {}
-}
-
-provider "google" {
-  project = var.google_project
-  region  = var.google_region
 }
 
