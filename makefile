@@ -106,17 +106,11 @@ terraform-apply: terraform-init terraform-validate ## Terraform Apply
 terraform-destroy: terraform-init ## Terraform Destroy Selected Services
 	$(call header,Run Terraform Apply)
 	cd $(terraform_dir)
-	terraform apply -auto-approve -destroy -var-file="$(terraform_tfvars)" \
-	-target=google_compute_address.cloud_nat[0] \
-	-target=google_compute_address.cloud_nat[1] \
-	-target=google_compute_router_nat.main[0] \
-	-target=google_compute_router_nat.main[1] \
-	-target=google_container_cluster.gke[0] \
-	-target=google_container_cluster.gke[1] \
-	-target=google_gke_hub_feature_membership.servicemesh[0] \
-	-target=google_gke_hub_feature_membership.servicemesh[1] \
-	-target=google_gke_hub_membership.gke[0] \
-	-target=google_gke_hub_membership.gke[1] \
+	terraform apply -destroy -var-file="$(terraform_tfvars)" \
+	-target=google_compute_address.cloud_nat \
+	-target=google_compute_router_nat.main \
+	-target=google_container_cluster.gke \
+	-target=module.gke_fleet \
 
 terraform-clean:
 	$(call header,Delete Terraform providers and state)

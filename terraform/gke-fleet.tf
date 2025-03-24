@@ -11,4 +11,8 @@ module "gke_fleet" {
     "gke-0" = { name = "gke-0", location = "us-central1" },
     "gke-1" = { name = "gke-1", location = "us-east1" },
   }
+
+  depends_on = [
+    google_container_cluster.gke,
+  ]
 }
