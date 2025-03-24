@@ -3,9 +3,9 @@
 ###############################################################################
 
 variable "gke_fleet_project" {
-  description = "GKE Fleet Project"
+  description = "The Google Project where GKE Fleet resides"
   type        = string
-  default     = "lab5-gcp-uat1"
+  default     = null
 }
 
 variable "gke_fleet_clusters" {
@@ -14,8 +14,5 @@ variable "gke_fleet_clusters" {
     name     = string
     location = string
   }))
-  default = {
-    "gke-0" = { name = "gke-0", location = "us-central1" },
-    "gke-1" = { name = "gke-1", location = "us-east1" },
-  }
+  default = null
 }

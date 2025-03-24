@@ -79,49 +79,43 @@ resource "google_gke_hub_feature_membership" "configmanagement" {
   }
 }
 
-# resource "google_gke_hub_feature" "servicemesh" {
-#   name     = "servicemesh"
-#   project  = var.gke_fleet_project
-#   location = "global"
+resource "google_gke_hub_feature" "servicemesh" {
+  name     = "servicemesh"
+  project  = var.gke_fleet_project
+  location = "global"
 
-#   depends_on = [
-#     google_gke_hub_membership.gke,
-#     google_project_service.main
-#   ]
-# }
+  depends_on = [
+    google_gke_hub_fleet.fleet
+  ]
+}
 
-# resource "google_gke_hub_feature_membership" "servicemesh" {
-#   count               = var.enable_gke ? length(var.gke_config) : 0
-#   feature             = google_gke_hub_feature.servicemesh.name
-#   membership          = google_gke_hub_membership.gke[count.index].membership_id
-#   membership_location = google_gke_hub_membership.gke[count.index].location
-#   location            = "global"
+resource "google_gke_hub_feature_membership" "servicemesh" {
+  for_each            = var.gke_fleet_clusters
+  feature             = google_gke_hub_feature.servicemesh.name
+  membership          = google_gke_hub_membership.gke[each.key].id
+  membership_location = google_gke_hub_membership.gke[each.key].location
+  location            = "global"
 
-#   mesh {
-#     management = "MANAGEMENT_AUTOMATIC"
-#   }
+  mesh {
+    management = "MANAGEMENT_AUTOMATIC"
+  }
+}
 
-#   depends_on = [
-#     google_gke_hub_membership.gke,
-#   ]
-# }
+resource "google_gke_hub_feature" "policycontroller" {
+  name     = "policycontroller"
+  project  = var.gke_fleet_project
+  location = "global"
 
-# resource "google_gke_hub_feature" "policycontroller" {
-#   name     = "policycontroller"
-#   project  = var.gke_fleet_project
-#   location = "global"
-
-#   depends_on = [
-#     google_gke_hub_membership.gke,
-#     google_project_service.main
-#   ]
-# }
+  depends_on = [
+    google_gke_hub_fleet.fleet
+  ]
+}
 
 # resource "google_gke_hub_feature_membership" "policycontroller" {
 #   count               = var.enable_gke ? length(var.gke_config) : 0
 #   feature             = google_gke_hub_feature.policycontroller.name
-#   membership          = google_gke_hub_membership.gke[count.index].membership_id
-#   membership_location = google_gke_hub_membership.gke[count.index].location
+#   membership          = google_gke_hub_membership.gke[each.key].id
+#   membership_location = google_gke_hub_membership.gke[each.key].location
 #   location            = "global"
 
 #   policycontroller {
