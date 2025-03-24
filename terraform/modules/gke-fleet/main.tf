@@ -4,12 +4,13 @@
 
 data "google_container_cluster" "cluster" {
   for_each = var.gke_fleet_clusters
+  project  = each.value.project
   name     = each.value.name
   location = each.value.location
 }
 
 resource "google_gke_hub_fleet" "fleet" {
-  display_name = "fleet-${var.gke_fleet_project}"
+  display_name = "gke-fleet-0"
   project      = var.gke_fleet_project
 
   default_cluster_config {
@@ -31,6 +32,7 @@ resource "google_gke_hub_fleet" "fleet" {
 
 resource "google_gke_hub_membership" "gke" {
   for_each      = var.gke_fleet_clusters
+  project       = data.google_container_cluster.cluster[each.key].project
   membership_id = data.google_container_cluster.cluster[each.key].name
   location      = data.google_container_cluster.cluster[each.key].location
 
@@ -48,8 +50,8 @@ resource "google_gke_hub_membership" "gke" {
 
 resource "google_gke_hub_feature" "configmanagement" {
   name     = "configmanagement"
-  project  = var.gke_fleet_project
   location = "global"
+  project  = var.gke_fleet_project
 
   depends_on = [
     google_gke_hub_fleet.fleet
@@ -58,10 +60,11 @@ resource "google_gke_hub_feature" "configmanagement" {
 
 resource "google_gke_hub_feature_membership" "configmanagement" {
   for_each            = var.gke_fleet_clusters
-  feature             = google_gke_hub_feature.configmanagement.name
+  feature             = google_gke_hub_feature.configmanagement.id
+  location            = "global"
+  project             = google_gke_hub_membership.gke[each.key].project
   membership          = google_gke_hub_membership.gke[each.key].id
   membership_location = google_gke_hub_membership.gke[each.key].location
-  location            = "global"
 
   configmanagement {
     management = "MANAGEMENT_AUTOMATIC"
@@ -81,8 +84,8 @@ resource "google_gke_hub_feature_membership" "configmanagement" {
 
 resource "google_gke_hub_feature" "servicemesh" {
   name     = "servicemesh"
-  project  = var.gke_fleet_project
   location = "global"
+  project  = var.gke_fleet_project
 
   depends_on = [
     google_gke_hub_fleet.fleet
@@ -91,7 +94,8 @@ resource "google_gke_hub_feature" "servicemesh" {
 
 resource "google_gke_hub_feature_membership" "servicemesh" {
   for_each            = var.gke_fleet_clusters
-  feature             = google_gke_hub_feature.servicemesh.name
+  feature             = google_gke_hub_feature.servicemesh.id
+  project             = google_gke_hub_membership.gke[each.key].project
   membership          = google_gke_hub_membership.gke[each.key].id
   membership_location = google_gke_hub_membership.gke[each.key].location
   location            = "global"
@@ -103,8 +107,8 @@ resource "google_gke_hub_feature_membership" "servicemesh" {
 
 resource "google_gke_hub_feature" "policycontroller" {
   name     = "policycontroller"
-  project  = var.gke_fleet_project
   location = "global"
+  project  = var.gke_fleet_project
 
   depends_on = [
     google_gke_hub_fleet.fleet
@@ -112,8 +116,9 @@ resource "google_gke_hub_feature" "policycontroller" {
 }
 
 # resource "google_gke_hub_feature_membership" "policycontroller" {
-#   count               = var.enable_gke ? length(var.gke_config) : 0
+#   for_each            = var.gke_fleet_clusters
 #   feature             = google_gke_hub_feature.policycontroller.name
+#   project             = google_gke_hub_membership.gke[each.key].project
 #   membership          = google_gke_hub_membership.gke[each.key].id
 #   membership_location = google_gke_hub_membership.gke[each.key].location
 #   location            = "global"
