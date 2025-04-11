@@ -3,28 +3,44 @@
 ###############################################################################
 
 locals {
-  gke_project_roles = [
+  gke_project_roles = toset([
     "roles/logging.logWriter",
     "roles/monitoring.metricWriter",
     "roles/viewer",
-  ]
+  ])
 }
 
-resource "google_service_account" "gke1" {
-  account_id   = "gke-01"
+resource "google_service_account" "gke" {
+  count        = var.enable_gke ? length(var.gke_config) : 0
+  account_id   = "gke-cluster-${count.index}"
   display_name = "GKE Service Account"
 }
 
-resource "google_project_iam_member" "gke1" {
-  for_each = toset(local.gke_project_roles)
-  project  = var.google_project
-  role     = each.value
-  member   = "serviceAccount:${google_service_account.gke1.email}"
+resource "google_project_iam_member" "gke" {
+  for_each = {
+    for pair in setproduct(toset(google_service_account.gke.*.member), local.gke_project_roles) :
+    "${pair[0]}-${pair[1]}" => {
+      member = pair[0]
+      role   = pair[1]
+    }
+  }
+  project = var.google_project
+  member  = each.value.member
+  role    = each.value.role
+
+  depends_on = [google_service_account.gke]
+}
+
+module "gke_kms" {
+  source = "./modules/gke-kms/"
+
+  count       = var.enable_gke ? length(var.gke_config) : 0
+  gke_project = var.google_project
+  gke_region  = var.gke_config[count.index].gke_region
 }
 
 ###############################################################################
-# The cluster dedicated to a single application. 
-# All GKE configuration choices based on the single-application workload.
+# GKE Cluster
 ###############################################################################
 
 resource "google_container_cluster" "gke" {
@@ -52,6 +68,11 @@ resource "google_container_cluster" "gke" {
 
   enterprise_config {
     desired_tier = "ENTERPRISE"
+  }
+
+  database_encryption {
+    state    = "ENCRYPTED"
+    key_name = module.gke_kms[count.index].kms_crypto_key_id
   }
 
   private_cluster_config {
@@ -129,5 +150,6 @@ resource "google_container_cluster" "gke" {
     google_compute_network.main,
     google_compute_subnetwork.gke_net,
     google_project_service.main,
+    module.gke_kms,
   ]
 }

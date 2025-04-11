@@ -16,7 +16,7 @@ google_project ?= lab5-gcp-uat1
 # Settings
 ###############################################################################
 
-app_id := gkefleet
+app_id := gkekms
 
 root_dir := $(abspath .)
 
